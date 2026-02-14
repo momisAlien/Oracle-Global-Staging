@@ -1,0 +1,279 @@
+'use client';
+
+import { useTranslations } from 'next-intl';
+import { useParams } from 'next/navigation';
+import { useState } from 'react';
+import TierStatsPanel from '@/components/tiers/TierStatsPanel';
+import { TIER_ORDER, TIER_NAMES, TIER_COLORS, TIER_AURA } from '@/lib/tiers';
+
+interface TierDef {
+    id: string;
+    questions: string;
+    features: string[];
+    priceKRW?: { regular: number; launch: number; renewal: number };
+    priceUSD?: { regular: number; launch: number; renewal: number };
+    priceJPY?: { regular: number; launch: number; renewal: number };
+}
+
+const TIERS: TierDef[] = [
+    { id: 'free', questions: '5/day', features: ['basic'] },
+    { id: 'plus', questions: '30/day', priceKRW: { regular: 30000, launch: 4900, renewal: 19000 }, priceUSD: { regular: 23, launch: 3.5, renewal: 14 }, priceJPY: { regular: 3000, launch: 500, renewal: 1900 }, features: ['medium', 'noAds'] },
+    { id: 'pro', questions: '100/day', priceKRW: { regular: 300000, launch: 10000, renewal: 59000 }, priceUSD: { regular: 230, launch: 7.5, renewal: 45 }, priceJPY: { regular: 30000, launch: 1000, renewal: 5900 }, features: ['deep', 'noAds', 'crossModule'] },
+    { id: 'archmage', questions: 'Unlimited', priceKRW: { regular: 990000, launch: 49000, renewal: 199000 }, priceUSD: { regular: 750, launch: 37, renewal: 150 }, priceJPY: { regular: 99000, launch: 4900, renewal: 19900 }, features: ['dualPass', 'noAds', 'crossModule', 'annualForecast'] },
+];
+
+// 각 티어의 실루엣/아이콘 (이미지가 추가되면 교체)
+const TIER_SILHOUETTES: Record<string, { emoji: string; auraSize: string }> = {
+    free: { emoji: '🧑‍🎓', auraSize: '120px' },
+    plus: { emoji: '🧙', auraSize: '160px' },
+    pro: { emoji: '🧙‍♂️', auraSize: '200px' },
+    archmage: { emoji: '🔮', auraSize: '240px' },
+};
+
+function formatPrice(amount: number, locale: string): string {
+    const currency = locale === 'ko' ? 'KRW' : locale === 'ja' ? 'JPY' : 'USD';
+    return new Intl.NumberFormat(
+        locale === 'ko' ? 'ko-KR' : locale === 'ja' ? 'ja-JP' : 'en-US',
+        { style: 'currency', currency, maximumFractionDigits: 0 }
+    ).format(amount);
+}
+
+export default function PricingPage() {
+    const t = useTranslations();
+    const { locale } = useParams();
+    const loc = (locale as string) || 'ko';
+    const [selectedTierIndex, setSelectedTierIndex] = useState(0);
+    const selectedTier = TIERS[selectedTierIndex];
+    const tierId = selectedTier.id;
+    const color = TIER_COLORS[tierId];
+    const aura = TIER_AURA[tierId];
+
+    function getPrice(tier: TierDef, type: 'launch' | 'renewal' | 'regular'): string {
+        if (tier.id === 'free') return t('tiers.free');
+        const priceSet = loc === 'ko' ? tier.priceKRW : loc === 'ja' ? tier.priceJPY : tier.priceUSD;
+        if (!priceSet) return '';
+        return formatPrice(priceSet[type], loc);
+    }
+
+    const featLabels: Record<string, Record<string, string>> = {
+        basic: { ko: '기본 운세 분석', ja: '基本占い', en: 'Basic readings', zh: '基础分析' },
+        medium: { ko: '중간 깊이 분석', ja: '中程度分析', en: 'Medium-depth analysis', zh: '中等深度分析' },
+        deep: { ko: '심층 분석', ja: '深層分析', en: 'Deep analysis', zh: '深度分析' },
+        noAds: { ko: '광고 없음', ja: '広告なし', en: 'No ads', zh: '无广告' },
+        crossModule: { ko: '크로스모듈 분석', ja: 'クロスモジュール', en: 'Cross-module', zh: '交叉分析' },
+        dualPass: { ko: '이중 추론 분석', ja: '二重推論', en: 'Dual reasoning', zh: '双重推理' },
+        annualForecast: { ko: '연간 예측', ja: '年間予測', en: 'Annual forecast', zh: '年度预测' },
+    };
+
+    return (
+        <section className="section">
+            <div className="container" style={{ maxWidth: '1100px' }}>
+                {/* 헤더 */}
+                <div className="text-center" style={{ marginBottom: 'var(--space-10)' }}>
+                    <h1 style={{ fontSize: 'var(--text-4xl)', fontWeight: 800, marginBottom: 'var(--space-3)' }}>
+                        <span className="text-gradient">{t('pricing.title')}</span>
+                    </h1>
+                    <p style={{ color: 'var(--color-text-secondary)', fontSize: 'var(--text-lg)' }}>
+                        {t('pricing.subtitle')}
+                    </p>
+                </div>
+
+                {/* RPG 캐릭터 선택 레이아웃 */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 'var(--space-8)', alignItems: 'start' }}>
+                    {/* LEFT — 캐릭터 스테이지 */}
+                    <div>
+                        {/* 캐릭터 디스플레이 */}
+                        <div style={{
+                            position: 'relative',
+                            height: '380px',
+                            borderRadius: '20px',
+                            overflow: 'hidden',
+                            background: 'linear-gradient(180deg, rgba(15,10,30,0.9) 0%, rgba(20,15,40,0.95) 100%)',
+                            border: `1px solid ${color}30`,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                        }}>
+                            {/* 오라 배경 */}
+                            <div style={{
+                                position: 'absolute',
+                                width: TIER_SILHOUETTES[tierId].auraSize,
+                                height: TIER_SILHOUETTES[tierId].auraSize,
+                                borderRadius: '50%',
+                                background: `radial-gradient(circle, ${aura}, transparent)`,
+                                animation: 'auraPulse 3s ease-in-out infinite',
+                            }} />
+
+                            {/* 마법진 */}
+                            <div style={{
+                                position: 'absolute',
+                                bottom: '40px',
+                                width: '200px',
+                                height: '50px',
+                                borderRadius: '50%',
+                                background: `radial-gradient(ellipse, ${color}25, transparent 70%)`,
+                                border: `1px solid ${color}20`,
+                            }} />
+
+                            {/* 캐릭터 (이미지 또는 실루엣) */}
+                            <div style={{
+                                position: 'relative',
+                                zIndex: 2,
+                                textAlign: 'center',
+                            }}>
+                                <div style={{
+                                    fontSize: '80px',
+                                    marginBottom: '8px',
+                                    filter: `drop-shadow(0 0 20px ${color}80)`,
+                                    transition: 'transform 0.5s, filter 0.5s',
+                                }}>
+                                    {TIER_SILHOUETTES[tierId].emoji}
+                                </div>
+                                <div style={{
+                                    fontSize: '10px',
+                                    color: 'rgba(255,255,255,0.3)',
+                                    letterSpacing: '0.1em',
+                                }}>
+                                    {loc === 'ko' ? '이미지를 추가하려면 /public/images/tiers/ 에 저장' : 'Add images to /public/images/tiers/'}
+                                </div>
+                            </div>
+
+                            {/* 티어 이름 오버레이 */}
+                            <div style={{
+                                position: 'absolute',
+                                top: '20px',
+                                left: '20px',
+                            }}>
+                                <span style={{
+                                    fontSize: '11px',
+                                    fontWeight: 700,
+                                    color: color,
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.15em',
+                                }}>
+                                    {tierId}
+                                </span>
+                                <h2 style={{ fontSize: '24px', fontWeight: 800, color: '#fff', margin: '4px 0' }}>
+                                    {TIER_NAMES[tierId]?.[loc] || tierId}
+                                </h2>
+                            </div>
+                        </div>
+
+                        {/* 캐릭터 선택 바 */}
+                        <div style={{
+                            display: 'flex',
+                            gap: '12px',
+                            justifyContent: 'center',
+                            marginTop: '16px',
+                        }}>
+                            {TIER_ORDER.map((tid, i) => (
+                                <button
+                                    key={tid}
+                                    onClick={() => setSelectedTierIndex(i)}
+                                    style={{
+                                        width: selectedTierIndex === i ? '80px' : '64px',
+                                        height: selectedTierIndex === i ? '80px' : '64px',
+                                        borderRadius: '14px',
+                                        background: selectedTierIndex === i
+                                            ? `linear-gradient(135deg, ${TIER_COLORS[tid]}30, ${TIER_COLORS[tid]}10)`
+                                            : 'rgba(255,255,255,0.03)',
+                                        border: selectedTierIndex === i
+                                            ? `2px solid ${TIER_COLORS[tid]}`
+                                            : '1px solid rgba(255,255,255,0.1)',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.3s ease',
+                                        transform: selectedTierIndex === i ? 'translateY(-4px)' : 'none',
+                                    }}
+                                >
+                                    <span style={{ fontSize: selectedTierIndex === i ? '28px' : '22px', transition: 'font-size 0.3s' }}>
+                                        {TIER_SILHOUETTES[tid].emoji}
+                                    </span>
+                                    <span style={{
+                                        fontSize: '9px',
+                                        color: selectedTierIndex === i ? TIER_COLORS[tid] : 'rgba(255,255,255,0.4)',
+                                        fontWeight: 700,
+                                        marginTop: '2px',
+                                    }}>
+                                        {TIER_NAMES[tid]?.[loc]?.split(' ')[0] || tid}
+                                    </span>
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* 가격 + CTA */}
+                        <div className="glass-card" style={{ marginTop: '16px', padding: '24px', textAlign: 'center' }}>
+                            {tierId === 'free' ? (
+                                <>
+                                    <span style={{ fontSize: 'var(--text-3xl)', fontWeight: 800 }}>{t('tiers.free')}</span>
+                                    <p style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-muted)', marginTop: '4px' }}>
+                                        {selectedTier.questions} {loc === 'ko' ? '질문' : 'questions'}
+                                    </p>
+                                    <button className="btn btn-secondary" style={{ width: '100%', marginTop: '16px' }}>
+                                        {t('tiers.currentPlan')}
+                                    </button>
+                                </>
+                            ) : (
+                                <>
+                                    <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center', gap: '8px' }}>
+                                        <span style={{ fontSize: '11px', color, fontWeight: 600, textTransform: 'uppercase' }}>
+                                            {t('tiers.launchSpecial')}
+                                        </span>
+                                    </div>
+                                    <span style={{ fontSize: 'var(--text-4xl)', fontWeight: 800 }}>
+                                        {getPrice(selectedTier, 'launch')}
+                                    </span>
+                                    <span style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-muted)' }}>
+                                        {t('tiers.perYear')}
+                                    </span>
+                                    <div style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-muted)', marginTop: '8px' }}>
+                                        <s>{t('tiers.regularPrice')}: {getPrice(selectedTier, 'regular')}</s>
+                                        {' · '}
+                                        {t('tiers.renewalPrice')}: {getPrice(selectedTier, 'renewal')}{t('tiers.perYear')}
+                                    </div>
+                                    <div style={{ display: 'flex', gap: '8px', marginTop: '8px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                                        <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>
+                                            ✦ {selectedTier.questions} {loc === 'ko' ? '질문' : 'questions'}
+                                        </span>
+                                        {selectedTier.features.map((f) => (
+                                            <span key={f} style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>
+                                                ✦ {featLabels[f]?.[loc] || f}
+                                            </span>
+                                        ))}
+                                    </div>
+                                    <a
+                                        href={`/${loc}/checkout/toss?tier=${tierId}`}
+                                        className={`btn ${tierId === 'archmage' ? 'btn-gold' : 'btn-primary'}`}
+                                        style={{ width: '100%', marginTop: '16px' }}
+                                    >
+                                        {t('tiers.subscribe')}
+                                    </a>
+                                </>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* RIGHT — 스탯 패널 */}
+                    <div>
+                        <TierStatsPanel tierId={tierId} locale={loc} />
+                    </div>
+                </div>
+            </div>
+
+            <style>{`
+                @keyframes auraPulse {
+                    0%, 100% { transform: scale(1); opacity: 0.6; }
+                    50% { transform: scale(1.15); opacity: 1; }
+                }
+                @media (max-width: 768px) {
+                    .container > div:last-child {
+                        grid-template-columns: 1fr !important;
+                    }
+                }
+            `}</style>
+        </section>
+    );
+}

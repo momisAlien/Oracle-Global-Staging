@@ -1,0 +1,89 @@
+[debug] [2026-02-14T14:17:28.296Z] ----------------------------------------------------------------------
+[debug] [2026-02-14T14:17:28.298Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\unico\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js projects:create oracle-global-staging --display-name  Oracle Global Staging
+[debug] [2026-02-14T14:17:28.298Z] CLI Version:   15.6.0
+[debug] [2026-02-14T14:17:28.298Z] Platform:      win32
+[debug] [2026-02-14T14:17:28.298Z] Node Version:  v24.13.1
+[debug] [2026-02-14T14:17:28.298Z] Time:          Sat Feb 14 2026 23:17:28 GMT+0900 (한국 표준시)
+[debug] [2026-02-14T14:17:28.298Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-02-14T14:17:28.302Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-14T14:17:28.302Z] > authorizing via signed-in user (unicon0118@gmail.com)
+[debug] [2026-02-14T14:17:28.303Z] Checked if tokens are valid: true, expires at: 1771082075572
+[debug] [2026-02-14T14:17:28.303Z] Checked if tokens are valid: true, expires at: 1771082075572
+[debug] [2026-02-14T14:17:28.304Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects [none]
+[debug] [2026-02-14T14:17:28.304Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects {"projectId":"oracle-global-staging","name":" Oracle Global Staging"}
+[debug] [2026-02-14T14:17:28.585Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects 409
+[debug] [2026-02-14T14:17:28.585Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects {"error":{"code":409,"message":"Requested entity already exists","status":"ALREADY_EXISTS"}}
+[debug] [2026-02-14T14:17:28.745Z] FirebaseError: Request to https://cloudresourcemanager.googleapis.com/v1/projects had HTTP Error: 409, Requested entity already exists
+    at responseToError (C:\Users\unico\AppData\Roaming\npm\node_modules\firebase-tools\lib\responseToError.js:53:12)
+    at RetryOperation._fn (C:\Users\unico\AppData\Roaming\npm\node_modules\firebase-tools\lib\apiv2.js:330:77)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+[error] 
+[error] Error: Failed to create project because there is already a project with ID oracle-global-staging. Please try again with a unique project ID.
+[debug] [2026-02-14T14:17:40.180Z] ----------------------------------------------------------------------
+[debug] [2026-02-14T14:17:40.182Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\unico\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js projects:create oracle-global-stg-kr --display-name  Oracle Global Staging
+[debug] [2026-02-14T14:17:40.182Z] CLI Version:   15.6.0
+[debug] [2026-02-14T14:17:40.182Z] Platform:      win32
+[debug] [2026-02-14T14:17:40.182Z] Node Version:  v24.13.1
+[debug] [2026-02-14T14:17:40.182Z] Time:          Sat Feb 14 2026 23:17:40 GMT+0900 (한국 표준시)
+[debug] [2026-02-14T14:17:40.182Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-02-14T14:17:40.186Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-14T14:17:40.186Z] > authorizing via signed-in user (unicon0118@gmail.com)
+[debug] [2026-02-14T14:17:40.187Z] Checked if tokens are valid: true, expires at: 1771082075572
+[debug] [2026-02-14T14:17:40.187Z] Checked if tokens are valid: true, expires at: 1771082075572
+[debug] [2026-02-14T14:17:40.188Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects [none]
+[debug] [2026-02-14T14:17:40.188Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects {"projectId":"oracle-global-stg-kr","name":" Oracle Global Staging"}
+[debug] [2026-02-14T14:17:40.632Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects 200
+[debug] [2026-02-14T14:17:40.632Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects {"name":"operations/create_project.global.6951047548252485279"}
+[debug] [2026-02-14T14:17:40.632Z] Checked if tokens are valid: true, expires at: 1771082075572
+[debug] [2026-02-14T14:17:40.633Z] Checked if tokens are valid: true, expires at: 1771082075572
+[debug] [2026-02-14T14:17:40.633Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/operations/create_project.global.6951047548252485279 [none]
+[debug] [2026-02-14T14:17:41.411Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/operations/create_project.global.6951047548252485279 200
+[debug] [2026-02-14T14:17:41.411Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/operations/create_project.global.6951047548252485279 {"name":"operations/create_project.global.6951047548252485279"}
+[debug] [2026-02-14T14:17:41.918Z] [Project Creation Poller] Retrying task index 0
+[debug] [2026-02-14T14:17:41.918Z] Checked if tokens are valid: true, expires at: 1771082075572
+[debug] [2026-02-14T14:17:41.918Z] Checked if tokens are valid: true, expires at: 1771082075572
+[debug] [2026-02-14T14:17:41.918Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/operations/create_project.global.6951047548252485279 [none]
+[debug] [2026-02-14T14:17:42.111Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/operations/create_project.global.6951047548252485279 200
+[debug] [2026-02-14T14:17:42.111Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/operations/create_project.global.6951047548252485279 {"name":"operations/create_project.global.6951047548252485279"}
+[debug] [2026-02-14T14:17:43.121Z] [Project Creation Poller] Retrying task index 0
+[debug] [2026-02-14T14:17:43.121Z] Checked if tokens are valid: true, expires at: 1771082075572
+[debug] [2026-02-14T14:17:43.121Z] Checked if tokens are valid: true, expires at: 1771082075572
+[debug] [2026-02-14T14:17:43.121Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/operations/create_project.global.6951047548252485279 [none]
+[debug] [2026-02-14T14:17:43.320Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/operations/create_project.global.6951047548252485279 200
+[debug] [2026-02-14T14:17:43.320Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/operations/create_project.global.6951047548252485279 {"name":"operations/create_project.global.6951047548252485279","metadata":{"@type":"type.googleapis.com/google.cloudresourcemanager.v1.ProjectCreationStatus","gettable":true,"ready":true},"done":true,"response":{"@type":"type.googleapis.com/google.cloudresourcemanager.v1.Project","projectNumber":"175310565684","projectId":"oracle-global-stg-kr","lifecycleState":"ACTIVE","name":" Oracle Global Staging","createTime":"2026-02-14T14:17:40.753030Z"}}
+[debug] [2026-02-14T14:17:43.321Z] Checked if tokens are valid: true, expires at: 1771082075572
+[debug] [2026-02-14T14:17:43.321Z] Checked if tokens are valid: true, expires at: 1771082075572
+[debug] [2026-02-14T14:17:43.321Z] >>> [apiv2][query] POST https://firebase.googleapis.com/v1beta1/projects/oracle-global-stg-kr:addFirebase [none]
+[debug] [2026-02-14T14:17:44.587Z] <<< [apiv2][status] POST https://firebase.googleapis.com/v1beta1/projects/oracle-global-stg-kr:addFirebase 403
+[debug] [2026-02-14T14:17:44.587Z] <<< [apiv2][body] POST https://firebase.googleapis.com/v1beta1/projects/oracle-global-stg-kr:addFirebase {"error":{"code":403,"message":"The caller does not have permission","status":"PERMISSION_DENIED"}}
+[debug] [2026-02-14T14:17:44.589Z] Request to https://firebase.googleapis.com/v1beta1/projects/oracle-global-stg-kr:addFirebase had HTTP Error: 403, The caller does not have permission
+[debug] [2026-02-14T14:17:44.755Z] FirebaseError: Request to https://firebase.googleapis.com/v1beta1/projects/oracle-global-stg-kr:addFirebase had HTTP Error: 403, The caller does not have permission
+    at responseToError (C:\Users\unico\AppData\Roaming\npm\node_modules\firebase-tools\lib\responseToError.js:53:12)
+    at RetryOperation._fn (C:\Users\unico\AppData\Roaming\npm\node_modules\firebase-tools\lib\apiv2.js:330:77)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+[error] 
+[error] Error: Failed to add Firebase to Google Cloud Platform project. See firebase-debug.log for more info.
+[debug] [2026-02-14T14:18:42.259Z] ----------------------------------------------------------------------
+[debug] [2026-02-14T14:18:42.261Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\unico\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js projects:addfirebase oracle-global-stg-kr
+[debug] [2026-02-14T14:18:42.261Z] CLI Version:   15.6.0
+[debug] [2026-02-14T14:18:42.261Z] Platform:      win32
+[debug] [2026-02-14T14:18:42.261Z] Node Version:  v24.13.1
+[debug] [2026-02-14T14:18:42.261Z] Time:          Sat Feb 14 2026 23:18:42 GMT+0900 (한국 표준시)
+[debug] [2026-02-14T14:18:42.261Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-02-14T14:18:42.265Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-14T14:18:42.265Z] > authorizing via signed-in user (unicon0118@gmail.com)
+[debug] [2026-02-14T14:18:42.266Z] Checked if tokens are valid: true, expires at: 1771082075572
+[debug] [2026-02-14T14:18:42.266Z] Checked if tokens are valid: true, expires at: 1771082075572
+[debug] [2026-02-14T14:18:42.267Z] >>> [apiv2][query] POST https://firebase.googleapis.com/v1beta1/projects/oracle-global-stg-kr:addFirebase [none]
+[debug] [2026-02-14T14:18:42.739Z] <<< [apiv2][status] POST https://firebase.googleapis.com/v1beta1/projects/oracle-global-stg-kr:addFirebase 403
+[debug] [2026-02-14T14:18:42.739Z] <<< [apiv2][body] POST https://firebase.googleapis.com/v1beta1/projects/oracle-global-stg-kr:addFirebase {"error":{"code":403,"message":"The caller does not have permission","status":"PERMISSION_DENIED"}}
+[debug] [2026-02-14T14:18:42.739Z] Request to https://firebase.googleapis.com/v1beta1/projects/oracle-global-stg-kr:addFirebase had HTTP Error: 403, The caller does not have permission
+[debug] [2026-02-14T14:18:42.879Z] FirebaseError: Request to https://firebase.googleapis.com/v1beta1/projects/oracle-global-stg-kr:addFirebase had HTTP Error: 403, The caller does not have permission
+    at responseToError (C:\Users\unico\AppData\Roaming\npm\node_modules\firebase-tools\lib\responseToError.js:53:12)
+    at RetryOperation._fn (C:\Users\unico\AppData\Roaming\npm\node_modules\firebase-tools\lib\apiv2.js:330:77)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+[error] 
+[error] Error: Failed to add Firebase to Google Cloud Platform project. See firebase-debug.log for more info.
