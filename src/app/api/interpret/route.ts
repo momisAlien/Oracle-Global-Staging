@@ -9,20 +9,17 @@
 */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { adminAuth, adminDb } from '@/lib/firebase/admin';
-import { entitlementPath } from '@/lib/db/paths';
-import { EntitlementDoc, TierName } from '@/lib/db/schema';
-import { checkAndIncrementQuota } from '@/lib/db/quota';
 import { interpretFortune } from '@/lib/ai/openai';
 import { verifyWithGemini } from '@/lib/ai/gemini';
 import type { FortuneSystem, Locale } from '@/lib/ai/prompts';
+import type { TierName } from '@/lib/db/schema';
 
-// Amplify 등 서버리스 환경에서 Edge 대신 Node.js 런타임 강제 (OpenAI SDK + Firebase Admin 호환)
+// Amplify 등 서버리스 환경에서 Edge 대신 Node.js 런타임 강제
 export const runtime = 'nodejs';
 
 export async function POST(request: NextRequest) {
     try {
-        // 1) 인증 확인 — Firebase ID 토큰 검증
+        // 1) 인증 확인 — Firebase ID 토큰 검증 (실패해도 free 티어로 계속 진행)
         const authHeader = request.headers.get('Authorization');
         let uid: string | null = null;
         let tier: TierName = 'free';
@@ -30,56 +27,67 @@ export async function POST(request: NextRequest) {
 
         if (authHeader?.startsWith('Bearer ')) {
             try {
+                // Firebase Admin을 동적 import로 지연 로드
+                const { getAdminAuth, getAdminDb } = await import('@/lib/firebase/admin');
+                const adminAuth = getAdminAuth();
+
                 const decoded = await adminAuth.verifyIdToken(
                     authHeader.replace('Bearer ', '')
                 );
                 uid = decoded.uid;
-            } catch {
-                return NextResponse.json(
-                    { error: '유효하지 않은 토큰입니다', code: 'INVALID_TOKEN' },
-                    { status: 401 }
-                );
-            }
 
-            // 3) 엔타이틀먼트 조회
-            const entDoc = await adminDb.doc(entitlementPath(uid)).get();
-            if (entDoc.exists) {
-                const entitlement = entDoc.data() as EntitlementDoc;
-                tier = entitlement.tier;
+                // 3) 엔타이틀먼트 조회
+                try {
+                    const { entitlementPath } = await import('@/lib/db/paths');
+                    const adminDb = getAdminDb();
+                    const entDoc = await adminDb.doc(entitlementPath(uid)).get();
 
-                // 4) 종합 분석 권한 체크
-                const body_peek = await request.clone().json();
-                if (body_peek.system === 'synthesis' && !entitlement.canSynthesis) {
-                    return NextResponse.json(
-                        {
-                            error: '종합 분석은 Pro 이상 티어에서만 사용 가능합니다',
-                            code: 'SYNTHESIS_DENIED',
-                            requiredTier: 'pro',
-                        },
-                        { status: 403 }
-                    );
+                    if (entDoc.exists) {
+                        const entitlement = entDoc.data() as import('@/lib/db/schema').EntitlementDoc;
+                        tier = entitlement.tier;
+
+                        // 4) 종합 분석 권한 체크
+                        const body_peek = await request.clone().json();
+                        if (body_peek.system === 'synthesis' && !entitlement.canSynthesis) {
+                            return NextResponse.json(
+                                {
+                                    error: '종합 분석은 Pro 이상 티어에서만 사용 가능합니다',
+                                    code: 'SYNTHESIS_DENIED',
+                                    requiredTier: 'pro',
+                                },
+                                { status: 403 }
+                            );
+                        }
+
+                        // 5) KST 기준 일일 쿼터 체크
+                        const { checkAndIncrementQuota } = await import('@/lib/db/quota');
+                        quotaResult = await checkAndIncrementQuota(
+                            uid,
+                            entitlement.dailyQuestionLimit
+                        );
+
+                        if (!quotaResult.allowed) {
+                            return NextResponse.json(
+                                {
+                                    error: '오늘의 질문 횟수가 소진되었습니다',
+                                    code: 'DAILY_LIMIT_REACHED',
+                                    limit: quotaResult.limit,
+                                    used: quotaResult.used,
+                                    remaining: 0,
+                                    kstDateKey: quotaResult.kstDateKey,
+                                    resetAt: 'KST 자정 (Asia/Seoul)',
+                                },
+                                { status: 429 }
+                            );
+                        }
+                    }
+                } catch (entError) {
+                    console.warn('[Interpret] Entitlement check failed, using free tier:', entError);
+                    // 엔타이틀먼트 조회 실패 시 free 티어로 계속 진행
                 }
-
-                // 5) KST 기준 일일 쿼터 체크
-                quotaResult = await checkAndIncrementQuota(
-                    uid,
-                    entitlement.dailyQuestionLimit
-                );
-
-                if (!quotaResult.allowed) {
-                    return NextResponse.json(
-                        {
-                            error: '오늘의 질문 횟수가 소진되었습니다',
-                            code: 'DAILY_LIMIT_REACHED',
-                            limit: quotaResult.limit,
-                            used: quotaResult.used,
-                            remaining: 0,
-                            kstDateKey: quotaResult.kstDateKey,
-                            resetAt: 'KST 자정 (Asia/Seoul)',
-                        },
-                        { status: 429 }
-                    );
-                }
+            } catch (authError) {
+                console.warn('[Interpret] Auth verification failed, proceeding as anonymous:', authError);
+                // 인증 실패 시 free 티어로 계속 진행 (500 대신 graceful fallback)
             }
         }
 
@@ -96,7 +104,6 @@ export async function POST(request: NextRequest) {
             latitude,
             longitude,
             drawnCards,
-
             chartData,
             gender,
         } = body;
@@ -121,7 +128,7 @@ export async function POST(request: NextRequest) {
         if (!process.env.OPENAI_API_KEY) {
             console.error('[Interpret API Error] Missing OPENAI_API_KEY');
             return NextResponse.json(
-                { error: 'OpenAI API 설정이 누락되었습니다', code: 'ENV_CONFIG_ERROR' },
+                { error: 'AI 서비스 설정이 누락되었습니다', code: 'ENV_CONFIG_ERROR' },
                 { status: 500 }
             );
         }
@@ -145,29 +152,24 @@ export async function POST(request: NextRequest) {
 
         // 7) Archmage 티어 → Gemini 2차 검증
         let geminiVerification = undefined;
-        if (tier === 'archmage') {
-            if (!process.env.GEMINI_API_KEY) {
-                console.warn('[Gemini 2nd pass skipped] Missing GEMINI_API_KEY');
-            } else {
-                try {
-                    geminiVerification = await verifyWithGemini({
-                        system: system as FortuneSystem,
-                        locale,
-                        originalResult: JSON.stringify(aiResult),
-                        question,
-                        birthDate,
-                        birthTime,
-                        birthPlace,
-                        isLunar,
-                        latitude,
-                        longitude,
-                        drawnCards,
-                        chartData,
-                    });
-                } catch (e) {
-                    console.warn('[Gemini 2nd pass failed]', e);
-                    // Gemini 오류 시 OpenAI 결과만 반환
-                }
+        if (tier === 'archmage' && process.env.GEMINI_API_KEY) {
+            try {
+                geminiVerification = await verifyWithGemini({
+                    system: system as FortuneSystem,
+                    locale,
+                    originalResult: JSON.stringify(aiResult),
+                    question,
+                    birthDate,
+                    birthTime,
+                    birthPlace,
+                    isLunar,
+                    latitude,
+                    longitude,
+                    drawnCards,
+                    chartData,
+                });
+            } catch (e) {
+                console.warn('[Gemini 2nd pass failed]', e);
             }
         }
 
@@ -180,17 +182,11 @@ export async function POST(request: NextRequest) {
             kstDateKey: quotaResult.kstDateKey,
         });
     } catch (error) {
-        console.error('[Interpret API Error Full]', error);
-        const errorMessage = error instanceof Error ? error.message : '해석 처리 실패';
-        const errorStack = error instanceof Error ? error.stack : undefined;
-
+        console.error('[Interpret API Error]', error);
         return NextResponse.json(
             {
-                error: errorMessage,
+                error: error instanceof Error ? error.message : '해석 처리 실패',
                 code: 'INTERNAL_SERVER_ERROR',
-                // 환경 변수 이름 노출 없이 어떤 부류의 에러인지 힌트 제공
-                hint: errorMessage.includes('credential') ? 'Firebase Admin Auth Error' :
-                    errorMessage.includes('OpenAI') ? 'AI Provider Error' : undefined
             },
             { status: 500 }
         );
