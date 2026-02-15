@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
+    "@swc/helpers": "^0.5.18",
     "astronomia": "^4.2.0",
     "firebase": "^12.9.0",
     "firebase-admin": "^13.6.1",
