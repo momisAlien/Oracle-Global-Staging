@@ -8,8 +8,6 @@
 */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { adminAuth } from '@/lib/firebase/admin';
-import { provisionNewUser, userExists } from '@/lib/db/provision';
 
 export const runtime = 'nodejs';
 
@@ -26,7 +24,10 @@ export async function POST(request: NextRequest) {
 
         const idToken = authHeader.replace('Bearer ', '');
 
-        // 2) ID 토큰 검증
+        // 2) ID 토큰 검증 (동적 import)
+        const { getAdminAuth } = await import('@/lib/firebase/admin');
+        const adminAuth = getAdminAuth();
+
         let decoded;
         try {
             decoded = await adminAuth.verifyIdToken(idToken);
@@ -42,6 +43,7 @@ export async function POST(request: NextRequest) {
         const displayName = decoded.name || decoded.email?.split('@')[0] || '';
 
         // 3) 이미 프로비저닝된 사용자인지 확인
+        const { provisionNewUser, userExists } = await import('@/lib/db/provision');
         const exists = await userExists(uid);
         if (exists) {
             return NextResponse.json({

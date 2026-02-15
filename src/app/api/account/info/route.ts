@@ -7,10 +7,6 @@
 */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { adminAuth, adminDb } from '@/lib/firebase/admin';
-import { entitlementPath, dailyQuotaPath } from '@/lib/db/paths';
-import { EntitlementDoc, DailyQuotaDoc } from '@/lib/db/schema';
-import { getKstDateKey } from '@/lib/time/kst';
 
 export const runtime = 'nodejs';
 
@@ -24,6 +20,11 @@ export async function GET(request: NextRequest) {
                 { status: 401 }
             );
         }
+
+        // 동적 import로 Firebase Admin 로드
+        const { getAdminAuth, getAdminDb } = await import('@/lib/firebase/admin');
+        const adminAuth = getAdminAuth();
+        const adminDb = getAdminDb();
 
         let uid: string;
         try {
@@ -39,10 +40,13 @@ export async function GET(request: NextRequest) {
         }
 
         // 2) 엔타이틀먼트 조회
+        const { entitlementPath, dailyQuotaPath } = await import('@/lib/db/paths');
+        const { getKstDateKey } = await import('@/lib/time/kst');
+
         const entDoc = await adminDb.doc(entitlementPath(uid)).get();
-        let entitlement: EntitlementDoc | null = null;
+        let entitlement = null;
         if (entDoc.exists) {
-            entitlement = entDoc.data() as EntitlementDoc;
+            entitlement = entDoc.data();
         }
 
         // 3) 오늘 사용량 조회
@@ -50,8 +54,8 @@ export async function GET(request: NextRequest) {
         const usageDoc = await adminDb.doc(dailyQuotaPath(uid, kstDateKey)).get();
         let usage = { usedQuestions: 0, kstDateKey };
         if (usageDoc.exists) {
-            const data = usageDoc.data() as DailyQuotaDoc;
-            usage = { usedQuestions: data.usedQuestions, kstDateKey };
+            const data = usageDoc.data();
+            usage = { usedQuestions: data?.usedQuestions || 0, kstDateKey };
         }
 
         return NextResponse.json({

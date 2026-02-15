@@ -105,16 +105,26 @@ export function getAdminAuth(): Auth {
     return _adminAuth;
 }
 
-// 하위 호환을 위한 getter 프로퍼티
+// 하위 호환을 위한 Proxy 기반 lazy export
 export const adminDb = new Proxy({} as Firestore, {
     get(_, prop) {
-        return (getAdminDb() as unknown as Record<string, unknown>)[prop as string];
+        const target = getAdminDb();
+        const val = (target as unknown as Record<string, unknown>)[prop as string];
+        if (typeof val === 'function') {
+            return (val as Function).bind(target);
+        }
+        return val;
     },
 });
 
 export const adminAuth = new Proxy({} as Auth, {
     get(_, prop) {
-        return (getAdminAuth() as unknown as Record<string, unknown>)[prop as string];
+        const target = getAdminAuth();
+        const val = (target as unknown as Record<string, unknown>)[prop as string];
+        if (typeof val === 'function') {
+            return (val as Function).bind(target);
+        }
+        return val;
     },
 });
 
