@@ -22,12 +22,19 @@ const TIERS: TierDef[] = [
     { id: 'archmage', questions: 'Unlimited', priceKRW: { regular: 990000, launch: 49000, renewal: 199000 }, priceUSD: { regular: 750, launch: 37, renewal: 150 }, priceJPY: { regular: 99000, launch: 4900, renewal: 19900 }, features: ['dualPass', 'noAds', 'crossModule', 'annualForecast'] },
 ];
 
-// 각 티어의 실루엣/아이콘 (이미지가 추가되면 교체)
-const TIER_SILHOUETTES: Record<string, { emoji: string; auraSize: string }> = {
-    free: { emoji: '🧑‍🎓', auraSize: '120px' },
-    plus: { emoji: '🧙', auraSize: '160px' },
-    pro: { emoji: '🧙‍♂️', auraSize: '200px' },
-    archmage: { emoji: '🔮', auraSize: '240px' },
+// 각 티어의 캐릭터 이미지 매핑
+const TIER_IMAGES: Record<string, Record<'male' | 'female', string>> = {
+    free: { male: '/images/tiers/Apprentice_male.png', female: '/images/tiers/Apprentice_female.png' },
+    plus: { male: '/images/tiers/seer_male.png', female: '/images/tiers/seer_female.png' },
+    pro: { male: '/images/tiers/Grand_Seer_male.png', female: '/images/tiers/Grand_Seer_female.png' },
+    archmage: { male: '/images/tiers/archmage_male.png', female: '/images/tiers/archmage_female.png' },
+};
+
+const TIER_AURA_SIZES: Record<string, string> = {
+    free: '160px',
+    plus: '200px',
+    pro: '240px',
+    archmage: '280px',
 };
 
 function formatPrice(amount: number, locale: string): string {
@@ -43,6 +50,7 @@ export default function PricingPage() {
     const { locale } = useParams();
     const loc = (locale as string) || 'ko';
     const [selectedTierIndex, setSelectedTierIndex] = useState(0);
+    const [gender, setGender] = useState<'male' | 'female'>('female');
     const selectedTier = TIERS[selectedTierIndex];
     const tierId = selectedTier.id;
     const color = TIER_COLORS[tierId];
@@ -65,6 +73,11 @@ export default function PricingPage() {
         annualForecast: { ko: '연간 예측', ja: '年間予測', en: 'Annual forecast', zh: '年度预测' },
     };
 
+    const genderLabels: Record<string, Record<string, string>> = {
+        male: { ko: '남성', ja: '男性', en: 'Male', zh: '男性' },
+        female: { ko: '여성', ja: '女性', en: 'Female', zh: '女性' },
+    };
+
     return (
         <section className="section">
             <div className="container" style={{ maxWidth: '1100px' }}>
@@ -78,6 +91,31 @@ export default function PricingPage() {
                     </p>
                 </div>
 
+                {/* 성별 토글 */}
+                <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '24px' }}>
+                    {(['male', 'female'] as const).map((g) => (
+                        <button
+                            key={g}
+                            onClick={() => setGender(g)}
+                            style={{
+                                padding: '8px 20px',
+                                borderRadius: '20px',
+                                background: gender === g
+                                    ? `linear-gradient(135deg, ${color}40, ${color}20)`
+                                    : 'rgba(255,255,255,0.03)',
+                                border: gender === g ? `1px solid ${color}` : '1px solid rgba(255,255,255,0.1)',
+                                color: gender === g ? '#fff' : 'rgba(255,255,255,0.5)',
+                                cursor: 'pointer',
+                                fontSize: '13px',
+                                fontWeight: 600,
+                                transition: 'all 0.3s ease',
+                            }}
+                        >
+                            {g === 'male' ? '🧙‍♂️' : '🧙‍♀️'} {genderLabels[g][loc] || genderLabels[g].en}
+                        </button>
+                    ))}
+                </div>
+
                 {/* RPG 캐릭터 선택 레이아웃 */}
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 'var(--space-8)', alignItems: 'start' }}>
                     {/* LEFT — 캐릭터 스테이지 */}
@@ -85,7 +123,7 @@ export default function PricingPage() {
                         {/* 캐릭터 디스플레이 */}
                         <div style={{
                             position: 'relative',
-                            height: '380px',
+                            height: '420px',
                             borderRadius: '20px',
                             overflow: 'hidden',
                             background: 'linear-gradient(180deg, rgba(15,10,30,0.9) 0%, rgba(20,15,40,0.95) 100%)',
@@ -97,8 +135,8 @@ export default function PricingPage() {
                             {/* 오라 배경 */}
                             <div style={{
                                 position: 'absolute',
-                                width: TIER_SILHOUETTES[tierId].auraSize,
-                                height: TIER_SILHOUETTES[tierId].auraSize,
+                                width: TIER_AURA_SIZES[tierId],
+                                height: TIER_AURA_SIZES[tierId],
                                 borderRadius: '50%',
                                 background: `radial-gradient(circle, ${aura}, transparent)`,
                                 animation: 'auraPulse 3s ease-in-out infinite',
@@ -107,35 +145,31 @@ export default function PricingPage() {
                             {/* 마법진 */}
                             <div style={{
                                 position: 'absolute',
-                                bottom: '40px',
-                                width: '200px',
-                                height: '50px',
+                                bottom: '30px',
+                                width: '240px',
+                                height: '60px',
                                 borderRadius: '50%',
                                 background: `radial-gradient(ellipse, ${color}25, transparent 70%)`,
                                 border: `1px solid ${color}20`,
                             }} />
 
-                            {/* 캐릭터 (이미지 또는 실루엣) */}
+                            {/* 캐릭터 이미지 */}
                             <div style={{
                                 position: 'relative',
                                 zIndex: 2,
                                 textAlign: 'center',
+                                animation: 'characterFloat 4s ease-in-out infinite',
                             }}>
-                                <div style={{
-                                    fontSize: '80px',
-                                    marginBottom: '8px',
-                                    filter: `drop-shadow(0 0 20px ${color}80)`,
-                                    transition: 'transform 0.5s, filter 0.5s',
-                                }}>
-                                    {TIER_SILHOUETTES[tierId].emoji}
-                                </div>
-                                <div style={{
-                                    fontSize: '10px',
-                                    color: 'rgba(255,255,255,0.3)',
-                                    letterSpacing: '0.1em',
-                                }}>
-                                    {loc === 'ko' ? '이미지를 추가하려면 /public/images/tiers/ 에 저장' : 'Add images to /public/images/tiers/'}
-                                </div>
+                                <img
+                                    src={TIER_IMAGES[tierId][gender]}
+                                    alt={TIER_NAMES[tierId]?.[loc] || tierId}
+                                    style={{
+                                        height: '300px',
+                                        objectFit: 'contain',
+                                        filter: `drop-shadow(0 0 30px ${color}60)`,
+                                        transition: 'all 0.5s cubic-bezier(0.22, 1, 0.36, 1)',
+                                    }}
+                                />
                             </div>
 
                             {/* 티어 이름 오버레이 */}
@@ -156,6 +190,24 @@ export default function PricingPage() {
                                 <h2 style={{ fontSize: '24px', fontWeight: 800, color: '#fff', margin: '4px 0' }}>
                                     {TIER_NAMES[tierId]?.[loc] || tierId}
                                 </h2>
+                            </div>
+
+                            {/* 성별 표시 배지 */}
+                            <div style={{
+                                position: 'absolute',
+                                top: '20px',
+                                right: '20px',
+                                fontSize: '20px',
+                                background: 'rgba(0,0,0,0.4)',
+                                borderRadius: '50%',
+                                width: '36px',
+                                height: '36px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                border: '1px solid rgba(255,255,255,0.1)',
+                            }}>
+                                {gender === 'male' ? '♂' : '♀'}
                             </div>
                         </div>
 
@@ -187,11 +239,22 @@ export default function PricingPage() {
                                         cursor: 'pointer',
                                         transition: 'all 0.3s ease',
                                         transform: selectedTierIndex === i ? 'translateY(-4px)' : 'none',
+                                        padding: '4px',
+                                        overflow: 'hidden',
                                     }}
                                 >
-                                    <span style={{ fontSize: selectedTierIndex === i ? '28px' : '22px', transition: 'font-size 0.3s' }}>
-                                        {TIER_SILHOUETTES[tid].emoji}
-                                    </span>
+                                    <img
+                                        src={TIER_IMAGES[tid][gender]}
+                                        alt={tid}
+                                        style={{
+                                            height: selectedTierIndex === i ? '50px' : '38px',
+                                            objectFit: 'contain',
+                                            transition: 'height 0.3s',
+                                            filter: selectedTierIndex === i
+                                                ? `drop-shadow(0 0 6px ${TIER_COLORS[tid]}80)`
+                                                : 'brightness(0.6)',
+                                        }}
+                                    />
                                     <span style={{
                                         fontSize: '9px',
                                         color: selectedTierIndex === i ? TIER_COLORS[tid] : 'rgba(255,255,255,0.4)',
@@ -267,6 +330,10 @@ export default function PricingPage() {
                 @keyframes auraPulse {
                     0%, 100% { transform: scale(1); opacity: 0.6; }
                     50% { transform: scale(1.15); opacity: 1; }
+                }
+                @keyframes characterFloat {
+                    0%, 100% { transform: translateY(0); }
+                    50% { transform: translateY(-8px); }
                 }
                 @media (max-width: 768px) {
                     .container > div:last-child {

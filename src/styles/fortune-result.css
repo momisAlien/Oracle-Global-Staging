@@ -1,0 +1,453 @@
+/* ===========================
+   비주얼 노벨 스타일 Fortune 결과 CSS
+   — 홀로그램 카드, 글래스모피즘, 파티클
+   =========================== */
+
+/* ---------- 전체 컨테이너 ---------- */
+.fortune-result {
+    position: relative;
+    margin-top: var(--space-8);
+    padding: var(--space-8);
+    border-radius: var(--radius-2xl);
+    background: linear-gradient(165deg, rgba(20, 18, 45, 0.95), rgba(10, 10, 26, 0.98));
+    border: 1px solid rgba(138, 100, 255, 0.2);
+    overflow: hidden;
+    animation: resultReveal 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes resultReveal {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* 배경 글로우 */
+.fortune-result::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at 30% 40%, rgba(138, 100, 255, 0.06) 0%, transparent 50%),
+        radial-gradient(circle at 70% 60%, rgba(78, 205, 196, 0.04) 0%, transparent 50%);
+    pointer-events: none;
+    animation: bgGlow 6s ease-in-out infinite alternate;
+}
+
+@keyframes bgGlow {
+    from {
+        opacity: 0.5;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* ---------- 레이아웃: 캐릭터 + 결과 ---------- */
+.fortune-result-layout {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: var(--space-6);
+    position: relative;
+    z-index: 1;
+}
+
+@media (max-width: 768px) {
+    .fortune-result-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ---------- 캐릭터 영역 ---------- */
+.fortune-character {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.fortune-character-img {
+    width: 180px;
+    height: auto;
+    max-height: 350px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 20px rgba(138, 100, 255, 0.3));
+    animation: charFloat 4s ease-in-out infinite;
+}
+
+@keyframes charFloat {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+.fortune-character-name {
+    margin-top: var(--space-2);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-accent-primary);
+    text-align: center;
+}
+
+/* ---------- 결과 콘텐츠 ---------- */
+.fortune-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+/* 서머리 배너 */
+.fortune-summary {
+    padding: var(--space-5) var(--space-6);
+    border-radius: var(--radius-xl);
+    background: linear-gradient(135deg, rgba(138, 100, 255, 0.15), rgba(78, 205, 196, 0.1));
+    border: 1px solid rgba(138, 100, 255, 0.2);
+    font-size: var(--text-lg);
+    font-weight: 600;
+    color: var(--color-text-primary);
+    line-height: var(--leading-relaxed);
+}
+
+/* ---------- 홀로그램 카드 스택 ---------- */
+.fortune-cards {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.fortune-card {
+    position: relative;
+    padding: var(--space-5) var(--space-6);
+    border-radius: var(--radius-lg);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(138, 100, 255, 0.15);
+    backdrop-filter: blur(8px);
+    transition: all var(--transition-base);
+    overflow: hidden;
+    animation: cardSlideIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    opacity: 0;
+}
+
+.fortune-card:hover {
+    border-color: rgba(138, 100, 255, 0.4);
+    background: rgba(255, 255, 255, 0.06);
+    transform: translateX(4px);
+}
+
+/* 홀로그램 쉬머 */
+.fortune-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(138, 100, 255, 0.05), transparent);
+    animation: holoShimmer 4s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes holoShimmer {
+    0% {
+        left: -100%;
+    }
+
+    50% {
+        left: 200%;
+    }
+
+    100% {
+        left: 200%;
+    }
+}
+
+@keyframes cardSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.fortune-card:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.fortune-card:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.fortune-card:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.fortune-card:nth-child(4) {
+    animation-delay: 0.4s;
+}
+
+.fortune-card:nth-child(5) {
+    animation-delay: 0.5s;
+}
+
+.fortune-card:nth-child(6) {
+    animation-delay: 0.6s;
+}
+
+.fortune-card-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-3);
+}
+
+.fortune-card-icon {
+    font-size: var(--text-2xl);
+}
+
+.fortune-card-title {
+    font-size: var(--text-base);
+    font-weight: 700;
+    color: var(--color-text-primary);
+}
+
+.fortune-card-content {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    line-height: var(--leading-relaxed);
+    white-space: pre-wrap;
+}
+
+/* ---------- 키 포인트 ---------- */
+.fortune-keypoints {
+    padding: var(--space-5) var(--space-6);
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, rgba(78, 205, 196, 0.08), rgba(138, 100, 255, 0.05));
+    border: 1px solid rgba(78, 205, 196, 0.2);
+}
+
+.fortune-keypoints h4 {
+    font-size: var(--text-sm);
+    font-weight: 700;
+    color: var(--color-accent-secondary);
+    margin-bottom: var(--space-3);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.fortune-keypoint-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.fortune-keypoint-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    line-height: var(--leading-relaxed);
+}
+
+.fortune-keypoint-item::before {
+    content: '✦';
+    color: var(--color-accent-primary);
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+/* ---------- 가이던스 ---------- */
+.fortune-guidance {
+    padding: var(--space-5) var(--space-6);
+    border-radius: var(--radius-lg);
+    background: rgba(255, 255, 255, 0.02);
+    border-left: 3px solid var(--color-accent-primary);
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    line-height: var(--leading-relaxed);
+    font-style: italic;
+    white-space: pre-wrap;
+}
+
+/* ---------- 행운 요소 ---------- */
+.fortune-lucky {
+    display: flex;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+}
+
+.fortune-lucky-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-full);
+    background: rgba(138, 100, 255, 0.1);
+    border: 1px solid rgba(138, 100, 255, 0.2);
+    font-size: var(--text-xs);
+    color: var(--color-text-secondary);
+}
+
+.fortune-lucky-label {
+    color: var(--color-accent-primary);
+    font-weight: 600;
+}
+
+/* ---------- Gemini 검증 (Archmage) ---------- */
+.fortune-gemini {
+    margin-top: var(--space-4);
+    padding: var(--space-5) var(--space-6);
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.05), rgba(138, 100, 255, 0.05));
+    border: 1px solid rgba(255, 215, 0, 0.2);
+}
+
+.fortune-gemini-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-3);
+    font-size: var(--text-sm);
+    font-weight: 700;
+    color: #ffd700;
+}
+
+.fortune-gemini-content {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    line-height: var(--leading-relaxed);
+    white-space: pre-wrap;
+}
+
+.fortune-gemini-patterns {
+    margin-top: var(--space-3);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.fortune-gemini-pattern {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+    font-size: var(--text-xs);
+    color: #ffd700;
+}
+
+.fortune-gemini-pattern::before {
+    content: '⚡';
+    flex-shrink: 0;
+}
+
+/* ---------- 모델 정보 & 디스클레이머 ---------- */
+.fortune-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: var(--space-4);
+    padding-top: var(--space-4);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+}
+
+.fortune-disclaimer {
+    font-style: italic;
+}
+
+/* ---------- 로딩 상태 ---------- */
+.fortune-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-16);
+    gap: var(--space-4);
+}
+
+.fortune-loading-orb {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(138, 100, 255, 0.3), transparent 70%);
+    border: 2px solid rgba(138, 100, 255, 0.3);
+    animation: orbPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes orbPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 0.5;
+        box-shadow: 0 0 20px rgba(138, 100, 255, 0.2);
+    }
+
+    50% {
+        transform: scale(1.15);
+        opacity: 1;
+        box-shadow: 0 0 40px rgba(138, 100, 255, 0.4);
+    }
+}
+
+.fortune-loading-text {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    animation: textPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes textPulse {
+
+    0%,
+    100% {
+        opacity: 0.5;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+/* ---------- 에러 상태 ---------- */
+.fortune-error {
+    padding: var(--space-6);
+    border-radius: var(--radius-lg);
+    background: rgba(255, 71, 71, 0.08);
+    border: 1px solid rgba(255, 71, 71, 0.2);
+    color: #ff6b6b;
+    text-align: center;
+}
+
+.fortune-error-icon {
+    font-size: var(--text-3xl);
+    margin-bottom: var(--space-2);
+}
+
+.fortune-error-msg {
+    font-size: var(--text-sm);
+}
+
+.fortune-error-retry {
+    margin-top: var(--space-4);
+}

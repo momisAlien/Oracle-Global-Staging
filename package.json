@@ -9,12 +9,14 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "astronomia": "^4.2.0",
     "firebase": "^12.9.0",
     "firebase-admin": "^13.6.1",
     "lunar-javascript": "^1.7.7",
     "next": "16.1.6",
     "next-intl": "^4.8.2",
+    "openai": "^6.22.0",
     "react": "19.2.3",
     "react-dom": "19.2.3"
   },
