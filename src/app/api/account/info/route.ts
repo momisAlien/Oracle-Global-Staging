@@ -12,6 +12,8 @@ import { entitlementPath, dailyQuotaPath } from '@/lib/db/paths';
 import { EntitlementDoc, DailyQuotaDoc } from '@/lib/db/schema';
 import { getKstDateKey } from '@/lib/time/kst';
 
+export const runtime = 'nodejs';
+
 export async function GET(request: NextRequest) {
     try {
         // 1) 인증 확인

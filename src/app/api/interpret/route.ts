@@ -17,6 +17,9 @@ import { interpretFortune } from '@/lib/ai/openai';
 import { verifyWithGemini } from '@/lib/ai/gemini';
 import type { FortuneSystem, Locale } from '@/lib/ai/prompts';
 
+// Amplify 등 서버리스 환경에서 Edge 대신 Node.js 런타임 강제 (OpenAI SDK + Firebase Admin 호환)
+export const runtime = 'nodejs';
+
 export async function POST(request: NextRequest) {
     try {
         // 1) 인증 확인 — Firebase ID 토큰 검증

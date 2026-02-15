@@ -11,6 +11,8 @@ import { isTossConfigured, getTossConfigError } from '@/lib/payments/toss/config
 import { tossProvider } from '@/lib/payments/toss/provider';
 import { TierName } from '@/lib/tiers';
 
+export const runtime = 'nodejs';
+
 export async function POST(request: NextRequest) {
     // 키 미설정 → 503
     if (!isTossConfigured()) {

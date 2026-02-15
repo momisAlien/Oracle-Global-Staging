@@ -11,6 +11,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { adminAuth } from '@/lib/firebase/admin';
 import { provisionNewUser, userExists } from '@/lib/db/provision';
 
+export const runtime = 'nodejs';
+
 export async function POST(request: NextRequest) {
     try {
         // 1) Authorization 헤더에서 ID 토큰 추출

@@ -10,6 +10,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { isTossConfigured, getTossConfigError } from '@/lib/payments/toss/config';
 import { tossProvider } from '@/lib/payments/toss/provider';
 
+export const runtime = 'nodejs';
+
 export async function POST(request: NextRequest) {
     // 키 미설정 → 503
     if (!isTossConfigured()) {

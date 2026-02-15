@@ -9,6 +9,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { tossProvider } from '@/lib/payments/toss/provider';
 
+export const runtime = 'nodejs';
+
 export async function POST(request: NextRequest) {
     try {
         // 웹훅 이벤트 처리
