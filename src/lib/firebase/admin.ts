@@ -21,7 +21,17 @@ function getAdminApp(): App {
     // 환경변수에서 서비스 계정 정보 로드
     const projectId = process.env.FIREBASE_ADMIN_PROJECT_ID || process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
     const clientEmail = process.env.FIREBASE_ADMIN_CLIENT_EMAIL;
-    const privateKey = process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(/\\n/g, '\n');
+    let privateKey = process.env.FIREBASE_ADMIN_PRIVATE_KEY;
+
+    if (privateKey) {
+        // 따옴표 제거 (Amplify 등 환경 변수 설정 시 실수 방지)
+        privateKey = privateKey.trim();
+        if (privateKey.startsWith('"') && privateKey.endsWith('"')) {
+            privateKey = privateKey.substring(1, privateKey.length - 1);
+        }
+        // \n 이스케이프 문자를 실제 줄바꿈으로 변환
+        privateKey = privateKey.replace(/\\n/g, '\n');
+    }
 
     if (projectId && clientEmail && privateKey) {
         return initializeApp({

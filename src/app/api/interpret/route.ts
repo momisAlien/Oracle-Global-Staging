@@ -115,6 +115,14 @@ export async function POST(request: NextRequest) {
 
         const locale: Locale = ['ko', 'ja', 'en', 'zh'].includes(reqLocale) ? reqLocale : 'ko';
 
+        if (!process.env.OPENAI_API_KEY) {
+            console.error('[Interpret API Error] Missing OPENAI_API_KEY');
+            return NextResponse.json(
+                { error: 'OpenAI API 설정이 누락되었습니다', code: 'ENV_CONFIG_ERROR' },
+                { status: 500 }
+            );
+        }
+
         // 6) OpenAI 해석 호출
         const aiResult = await interpretFortune({
             system: system as FortuneSystem,
@@ -128,7 +136,6 @@ export async function POST(request: NextRequest) {
             latitude,
             longitude,
             drawnCards,
-
             chartData,
             gender,
         });
@@ -136,24 +143,28 @@ export async function POST(request: NextRequest) {
         // 7) Archmage 티어 → Gemini 2차 검증
         let geminiVerification = undefined;
         if (tier === 'archmage') {
-            try {
-                geminiVerification = await verifyWithGemini({
-                    system: system as FortuneSystem,
-                    locale,
-                    originalResult: JSON.stringify(aiResult),
-                    question,
-                    birthDate,
-                    birthTime,
-                    birthPlace,
-                    isLunar,
-                    latitude,
-                    longitude,
-                    drawnCards,
-                    chartData,
-                });
-            } catch (e) {
-                console.warn('[Gemini 2nd pass failed]', e);
-                // Gemini 오류 시 OpenAI 결과만 반환
+            if (!process.env.GEMINI_API_KEY) {
+                console.warn('[Gemini 2nd pass skipped] Missing GEMINI_API_KEY');
+            } else {
+                try {
+                    geminiVerification = await verifyWithGemini({
+                        system: system as FortuneSystem,
+                        locale,
+                        originalResult: JSON.stringify(aiResult),
+                        question,
+                        birthDate,
+                        birthTime,
+                        birthPlace,
+                        isLunar,
+                        latitude,
+                        longitude,
+                        drawnCards,
+                        chartData,
+                    });
+                } catch (e) {
+                    console.warn('[Gemini 2nd pass failed]', e);
+                    // Gemini 오류 시 OpenAI 결과만 반환
+                }
             }
         }
 
@@ -166,9 +177,18 @@ export async function POST(request: NextRequest) {
             kstDateKey: quotaResult.kstDateKey,
         });
     } catch (error) {
-        console.error('[Interpret API Error]', error);
+        console.error('[Interpret API Error Full]', error);
+        const errorMessage = error instanceof Error ? error.message : '해석 처리 실패';
+        const errorStack = error instanceof Error ? error.stack : undefined;
+
         return NextResponse.json(
-            { error: error instanceof Error ? error.message : '해석 처리 실패' },
+            {
+                error: errorMessage,
+                code: 'INTERNAL_SERVER_ERROR',
+                // 환경 변수 이름 노출 없이 어떤 부류의 에러인지 힌트 제공
+                hint: errorMessage.includes('credential') ? 'Firebase Admin Auth Error' :
+                    errorMessage.includes('OpenAI') ? 'AI Provider Error' : undefined
+            },
             { status: 500 }
         );
     }
