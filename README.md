@@ -70,3 +70,17 @@ Free 티어 일일 5회 제한은 **KST(Asia/Seoul) 자정** 기준으로 서버
 ## ⚖️ 면책
 
 > 본 서비스는 오락 및 개인적 성찰 목적으로만 제공됩니다.
+
+## 🚩 Feature Flags
+
+서버 런타임 환경변수를 통해 다음 기능을 제어할 수 있습니다 (재배포 불필요).
+
+| 변수명 | 기본값 | 설명 |
+|--------|--------|------|
+| `PAYMENTS_ENABLED` | `false` | `true`일 때만 결제 API 및 UI 활성화 |
+| `TEST_MODE` | `false` | `true`일 때 `/tier-lab` 접근 및 `X-Tier-Override` 허용 |
+| `ADMIN_EMAILS` | (없음) | 관리자 이메일 목록 (콤마 구분). `set-tier` API 접근 제어 |
+
+### Amplify 배포 시 설정
+Amplify Console > App settings > Environment variables 메뉴에서 위 변수를 추가/수정하면 됩니다.
+

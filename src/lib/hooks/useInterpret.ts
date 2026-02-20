@@ -27,6 +27,13 @@ export interface InterpretResponse {
     };
     tier: string;
     quotaRemaining: number;
+    meta?: {
+        userTier: string;
+        effectiveTier: string;
+        seedKey: string;
+        latencyMs: number;
+        cacheHit: boolean;
+    };
 }
 
 interface UseInterpretReturn {

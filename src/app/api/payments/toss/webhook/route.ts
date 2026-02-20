@@ -12,6 +12,16 @@ import { tossProvider } from '@/lib/payments/toss/provider';
 export const runtime = 'nodejs';
 
 export async function POST(request: NextRequest) {
+    // Feature Flag: 결제 비활성화 시 200 반환 (403은 provider 재시도 유발)
+    const { isPaymentsEnabled } = await import('@/lib/featureFlags');
+    if (!isPaymentsEnabled()) {
+        return NextResponse.json({
+            received: true,
+            handled: false,
+            reason: 'PAYMENT_DISABLED',
+        });
+    }
+
     try {
         // 웹훅 이벤트 처리
         const result = await tossProvider.handleWebhook(request);

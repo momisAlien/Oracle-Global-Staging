@@ -2,156 +2,166 @@
 
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
 
 // 로케일별 모듈 순서
 const MODULE_ORDER: Record<string, string[]> = {
-    ko: ['saju', 'astrology', 'tarot'],
-    ja: ['tarot', 'astrology', 'saju'],
-    en: ['astrology', 'tarot', 'saju'],
-    zh: ['astrology', 'saju', 'tarot'],
+  ko: ['saju', 'astrology', 'tarot'],
+  ja: ['tarot', 'astrology', 'saju'],
+  en: ['astrology', 'tarot', 'saju'],
+  zh: ['astrology', 'saju', 'tarot'],
 };
 
 const MODULE_CONFIG: Record<string, { icon: string; gradient: string; href: string }> = {
-    astrology: { icon: '✦', gradient: 'linear-gradient(135deg, #8a64ff, #6c4fe0)', href: '/astrology' },
-    saju: { icon: '☯', gradient: 'linear-gradient(135deg, #ff6b9d, #ee5a24)', href: '/saju' },
-    tarot: { icon: '🃏', gradient: 'linear-gradient(135deg, #4ecdc4, #2ecc71)', href: '/tarot' },
+  astrology: { icon: '✦', gradient: 'linear-gradient(135deg, #8a64ff, #6c4fe0)', href: '/astrology' },
+  saju: { icon: '☯', gradient: 'linear-gradient(135deg, #ff6b9d, #ee5a24)', href: '/saju' },
+  tarot: { icon: '🃏', gradient: 'linear-gradient(135deg, #4ecdc4, #2ecc71)', href: '/tarot' },
 };
 
 export default function LandingPage() {
-    const t = useTranslations();
-    const { locale } = useParams();
-    const currentLocale = (locale as string) || 'ko';
-    const moduleOrder = MODULE_ORDER[currentLocale] || MODULE_ORDER.en;
+  const t = useTranslations();
+  const { locale } = useParams();
+  const currentLocale = (locale as string) || 'ko';
+  const moduleOrder = MODULE_ORDER[currentLocale] || MODULE_ORDER.en;
+  const [paymentsEnabled, setPaymentsEnabled] = useState(false);
 
-    return (
-        <>
-            {/* Hero Section */}
-            <section className="hero cosmic-bg">
-                <div className="container">
-                    <div className="hero-content animate-fade-in">
-                        <div className="hero-badge">
-                            <span className="badge badge-pro">Premium AI Fortune</span>
-                        </div>
-                        <h1 className="hero-title">
-                            <span className="text-gradient">{t('landing.heroTitle')}</span>
-                        </h1>
-                        <p className="hero-subtitle">{t('landing.heroSubtitle')}</p>
-                        <div className="hero-cta">
-                            <a href={`/${currentLocale}${MODULE_CONFIG[moduleOrder[0]].href}`} className="btn btn-primary btn-lg">
-                                {moduleOrder[0] === 'saju' ? t('landing.ctaSaju') : moduleOrder[0] === 'astrology' ? t('landing.ctaAstrology') : t('landing.ctaTarot')}
-                            </a>
-                            <a href={`/${currentLocale}/pricing`} className="btn btn-secondary btn-lg">
-                                {t('tiers.subscribe')}
-                            </a>
-                        </div>
-                    </div>
-                    <div className="hero-orb animate-float" />
+  useEffect(() => {
+    fetch('/api/config').then(r => r.json()).then(d => setPaymentsEnabled(d.paymentsEnabled)).catch(() => { });
+  }, []);
+
+  const tierCta = paymentsEnabled
+    ? t('tiers.subscribe')
+    : (currentLocale === 'ko' ? '티어 비교' : currentLocale === 'ja' ? 'ティア比較' : currentLocale === 'zh' ? '套餐对比' : 'Compare Tiers');
+
+  return (
+    <>
+      {/* Hero Section */}
+      <section className="hero cosmic-bg">
+        <div className="container">
+          <div className="hero-content animate-fade-in">
+            <div className="hero-badge">
+              <span className="badge badge-pro">Premium AI Fortune</span>
+            </div>
+            <h1 className="hero-title">
+              <span className="text-gradient">{t('landing.heroTitle')}</span>
+            </h1>
+            <p className="hero-subtitle">{t('landing.heroSubtitle')}</p>
+            <div className="hero-cta">
+              <a href={`/${currentLocale}${MODULE_CONFIG[moduleOrder[0]].href}`} className="btn btn-primary btn-lg">
+                {moduleOrder[0] === 'saju' ? t('landing.ctaSaju') : moduleOrder[0] === 'astrology' ? t('landing.ctaAstrology') : t('landing.ctaTarot')}
+              </a>
+              <a href={`/${currentLocale}/pricing`} className="btn btn-secondary btn-lg">
+                {tierCta}
+              </a>
+            </div>
+          </div>
+          <div className="hero-orb animate-float" />
+        </div>
+      </section>
+
+      {/* Module Cards */}
+      <section className="section">
+        <div className="container">
+          <div className="module-grid">
+            {moduleOrder.map((mod, i) => {
+              const config = MODULE_CONFIG[mod];
+              const names: Record<string, Record<string, string>> = {
+                astrology: { ko: '점성술', ja: '占星術', en: 'Astrology', zh: '占星术' },
+                saju: { ko: '사주팔자', ja: '四柱推命', en: 'Four Pillars', zh: '四柱八字' },
+                tarot: { ko: '타로', ja: 'タロット', en: 'Tarot', zh: '塔罗牌' },
+              };
+              const descs: Record<string, Record<string, string>> = {
+                astrology: {
+                  ko: '천체력 기반 정밀 출생차트 분석',
+                  ja: 'エフェメリスに基づく精密なネイタルチャート分析',
+                  en: 'Ephemeris-based precision natal chart analysis',
+                  zh: '基于星历的精确出生星盘分析',
+                },
+                saju: {
+                  ko: '절기 기준 사주팔자·십신·오행·대운 분석',
+                  ja: '節気基準の四柱推命・十神・五行・大運分析',
+                  en: 'Solar-term based Four Pillars, Ten Gods & Five Elements',
+                  zh: '基于节气的四柱八字、十神、五行、大运分析',
+                },
+                tarot: {
+                  ko: '직관이 안내하는 타로 카드 리딩',
+                  ja: '直感が導くタロットカードリーディング',
+                  en: 'Intuition-guided tarot card readings',
+                  zh: '直觉引导的塔罗牌解读',
+                },
+              };
+
+              return (
+                <a
+                  key={mod}
+                  href={`/${currentLocale}${config.href}`}
+                  className="glass-card module-card"
+                  style={{ animationDelay: `${i * 0.15}s` }}
+                >
+                  <div className="module-icon" style={{ background: config.gradient }}>
+                    {config.icon}
+                  </div>
+                  <h3 className="module-name">{names[mod][currentLocale]}</h3>
+                  <p className="module-desc">{descs[mod][currentLocale]}</p>
+                  <span className="module-arrow">→</span>
+                </a>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Trust Section */}
+      <section className="section trust-section">
+        <div className="container text-center">
+          <div className="trust-badges">
+            <div className="glass-card trust-badge">
+              <span className="trust-icon">🔬</span>
+              <span>{currentLocale === 'ko' ? '천체력 기반 정밀 계산' : currentLocale === 'ja' ? 'エフェメリス基盤精密計算' : 'Ephemeris-based Precision'}</span>
+            </div>
+            <div className="glass-card trust-badge">
+              <span className="trust-icon">🛡️</span>
+              <span>{currentLocale === 'ko' ? '전통 프레임워크 기반' : currentLocale === 'ja' ? '伝統的フレームワーク' : 'Traditional Frameworks'}</span>
+            </div>
+            <div className="glass-card trust-badge">
+              <span className="trust-icon">🤖</span>
+              <span>{currentLocale === 'ko' ? 'AI 강화 해석' : currentLocale === 'ja' ? 'AI強化解釈' : 'AI-Enhanced Interpretation'}</span>
+            </div>
+          </div>
+          <p className="trust-statement">
+            {t('common.trustStatement')}
+          </p>
+        </div>
+      </section>
+
+      {/* Tier Preview */}
+      <section className="section">
+        <div className="container text-center">
+          <h2 className="section-title">
+            <span className="text-gradient">
+              {currentLocale === 'ko' ? '당신의 점술사를 선택하세요' : currentLocale === 'ja' ? 'あなたの占い師を選んでください' : 'Choose Your Seer'}
+            </span>
+          </h2>
+          <div className="tier-preview-grid">
+            {(['free', 'plus', 'pro', 'archmage'] as const).map((tier) => {
+              const names = { free: t('tiers.apprentice'), plus: t('tiers.tenYear'), pro: t('tiers.hundredYear'), archmage: t('tiers.archmage') };
+              const colors = { free: 'var(--tier-free)', plus: 'var(--tier-plus)', pro: 'var(--tier-pro)', archmage: 'var(--tier-archmage)' };
+              const badges = { free: 'badge-free', plus: 'badge-plus', pro: 'badge-pro', archmage: 'badge-archmage' };
+              return (
+                <div key={tier} className="glass-card tier-preview-card">
+                  <span className={`badge ${badges[tier]}`}>{tier === 'free' ? t('tiers.free') : tier.toUpperCase()}</span>
+                  <h3 style={{ color: colors[tier] }}>{names[tier]}</h3>
+                  <a href={`/${currentLocale}/pricing`} className="btn btn-secondary" style={{ borderColor: colors[tier], marginTop: 'var(--space-4)' }}>
+                    {tierCta}
+                  </a>
                 </div>
-            </section>
+              );
+            })}
+          </div>
+        </div>
+      </section>
 
-            {/* Module Cards */}
-            <section className="section">
-                <div className="container">
-                    <div className="module-grid">
-                        {moduleOrder.map((mod, i) => {
-                            const config = MODULE_CONFIG[mod];
-                            const names: Record<string, Record<string, string>> = {
-                                astrology: { ko: '점성술', ja: '占星術', en: 'Astrology', zh: '占星术' },
-                                saju: { ko: '사주팔자', ja: '四柱推命', en: 'Four Pillars', zh: '四柱八字' },
-                                tarot: { ko: '타로', ja: 'タロット', en: 'Tarot', zh: '塔罗牌' },
-                            };
-                            const descs: Record<string, Record<string, string>> = {
-                                astrology: {
-                                    ko: '천체력 기반 정밀 출생차트 분석',
-                                    ja: 'エフェメリスに基づく精密なネイタルチャート分析',
-                                    en: 'Ephemeris-based precision natal chart analysis',
-                                    zh: '基于星历的精确出生星盘分析',
-                                },
-                                saju: {
-                                    ko: '절기 기준 사주팔자·십신·오행·대운 분석',
-                                    ja: '節気基準の四柱推命・十神・五行・大運分析',
-                                    en: 'Solar-term based Four Pillars, Ten Gods & Five Elements',
-                                    zh: '基于节气的四柱八字、十神、五行、大运分析',
-                                },
-                                tarot: {
-                                    ko: '직관이 안내하는 타로 카드 리딩',
-                                    ja: '直感が導くタロットカードリーディング',
-                                    en: 'Intuition-guided tarot card readings',
-                                    zh: '直觉引导的塔罗牌解读',
-                                },
-                            };
-
-                            return (
-                                <a
-                                    key={mod}
-                                    href={`/${currentLocale}${config.href}`}
-                                    className="glass-card module-card"
-                                    style={{ animationDelay: `${i * 0.15}s` }}
-                                >
-                                    <div className="module-icon" style={{ background: config.gradient }}>
-                                        {config.icon}
-                                    </div>
-                                    <h3 className="module-name">{names[mod][currentLocale]}</h3>
-                                    <p className="module-desc">{descs[mod][currentLocale]}</p>
-                                    <span className="module-arrow">→</span>
-                                </a>
-                            );
-                        })}
-                    </div>
-                </div>
-            </section>
-
-            {/* Trust Section */}
-            <section className="section trust-section">
-                <div className="container text-center">
-                    <div className="trust-badges">
-                        <div className="glass-card trust-badge">
-                            <span className="trust-icon">🔬</span>
-                            <span>{currentLocale === 'ko' ? '천체력 기반 정밀 계산' : currentLocale === 'ja' ? 'エフェメリス基盤精密計算' : 'Ephemeris-based Precision'}</span>
-                        </div>
-                        <div className="glass-card trust-badge">
-                            <span className="trust-icon">🛡️</span>
-                            <span>{currentLocale === 'ko' ? '전통 프레임워크 기반' : currentLocale === 'ja' ? '伝統的フレームワーク' : 'Traditional Frameworks'}</span>
-                        </div>
-                        <div className="glass-card trust-badge">
-                            <span className="trust-icon">🤖</span>
-                            <span>{currentLocale === 'ko' ? 'AI 강화 해석' : currentLocale === 'ja' ? 'AI強化解釈' : 'AI-Enhanced Interpretation'}</span>
-                        </div>
-                    </div>
-                    <p className="trust-statement">
-                        {t('common.trustStatement')}
-                    </p>
-                </div>
-            </section>
-
-            {/* Tier Preview */}
-            <section className="section">
-                <div className="container text-center">
-                    <h2 className="section-title">
-                        <span className="text-gradient">
-                            {currentLocale === 'ko' ? '당신의 점술사를 선택하세요' : currentLocale === 'ja' ? 'あなたの占い師を選んでください' : 'Choose Your Seer'}
-                        </span>
-                    </h2>
-                    <div className="tier-preview-grid">
-                        {(['free', 'plus', 'pro', 'archmage'] as const).map((tier) => {
-                            const names = { free: t('tiers.apprentice'), plus: t('tiers.tenYear'), pro: t('tiers.hundredYear'), archmage: t('tiers.archmage') };
-                            const colors = { free: 'var(--tier-free)', plus: 'var(--tier-plus)', pro: 'var(--tier-pro)', archmage: 'var(--tier-archmage)' };
-                            const badges = { free: 'badge-free', plus: 'badge-plus', pro: 'badge-pro', archmage: 'badge-archmage' };
-                            return (
-                                <div key={tier} className="glass-card tier-preview-card">
-                                    <span className={`badge ${badges[tier]}`}>{tier === 'free' ? t('tiers.free') : tier.toUpperCase()}</span>
-                                    <h3 style={{ color: colors[tier] }}>{names[tier]}</h3>
-                                    <a href={`/${currentLocale}/pricing`} className="btn btn-secondary" style={{ borderColor: colors[tier], marginTop: 'var(--space-4)' }}>
-                                        {t('tiers.subscribe')}
-                                    </a>
-                                </div>
-                            );
-                        })}
-                    </div>
-                </div>
-            </section>
-
-            <style>{`
+      <style>{`
         .hero {
           padding: var(--space-24) 0 var(--space-20);
           position: relative;
@@ -293,6 +303,6 @@ export default function LandingPage() {
           font-weight: 700;
         }
       `}</style>
-        </>
-    );
+    </>
+  );
 }

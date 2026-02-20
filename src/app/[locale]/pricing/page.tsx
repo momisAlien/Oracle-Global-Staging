@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import TierStatsPanel from '@/components/tiers/TierStatsPanel';
 import { TIER_ORDER, TIER_NAMES, TIER_COLORS, TIER_AURA } from '@/lib/tiers';
 
@@ -51,10 +51,15 @@ export default function PricingPage() {
     const loc = (locale as string) || 'ko';
     const [selectedTierIndex, setSelectedTierIndex] = useState(0);
     const [gender, setGender] = useState<'male' | 'female'>('female');
+    const [paymentsEnabled, setPaymentsEnabled] = useState(false);
     const selectedTier = TIERS[selectedTierIndex];
     const tierId = selectedTier.id;
     const color = TIER_COLORS[tierId];
     const aura = TIER_AURA[tierId];
+
+    useEffect(() => {
+        fetch('/api/config').then(r => r.json()).then(d => setPaymentsEnabled(d.paymentsEnabled)).catch(() => { });
+    }, []);
 
     function getPrice(tier: TierDef, type: 'launch' | 'renewal' | 'regular'): string {
         if (tier.id === 'free') return t('tiers.free');
@@ -307,13 +312,23 @@ export default function PricingPage() {
                                             </span>
                                         ))}
                                     </div>
-                                    <a
-                                        href={`/${loc}/checkout/toss?tier=${tierId}`}
-                                        className={`btn ${tierId === 'archmage' ? 'btn-gold' : 'btn-primary'}`}
-                                        style={{ width: '100%', marginTop: '16px' }}
-                                    >
-                                        {t('tiers.subscribe')}
-                                    </a>
+                                    {paymentsEnabled ? (
+                                        <a
+                                            href={`/${loc}/checkout/toss?tier=${tierId}`}
+                                            className={`btn ${tierId === 'archmage' ? 'btn-gold' : 'btn-primary'}`}
+                                            style={{ width: '100%', marginTop: '16px' }}
+                                        >
+                                            {t('tiers.subscribe')}
+                                        </a>
+                                    ) : (
+                                        <button
+                                            disabled
+                                            className="btn btn-secondary"
+                                            style={{ width: '100%', marginTop: '16px', opacity: 0.6, cursor: 'not-allowed' }}
+                                        >
+                                            ✨ {loc === 'ko' ? '준비 중' : loc === 'ja' ? '準備中' : loc === 'zh' ? '准备中' : 'Coming Soon'}
+                                        </button>
+                                    )}
                                 </>
                             )}
                         </div>

@@ -13,6 +13,12 @@ import { tossProvider } from '@/lib/payments/toss/provider';
 export const runtime = 'nodejs';
 
 export async function POST(request: NextRequest) {
+    // Feature Flag: 결제 비활성화 시 즉시 차단
+    const { isPaymentsEnabled, PAYMENT_DISABLED_RESPONSE } = await import('@/lib/featureFlags');
+    if (!isPaymentsEnabled()) {
+        return NextResponse.json(PAYMENT_DISABLED_RESPONSE, { status: 403 });
+    }
+
     // 키 미설정 → 503
     if (!isTossConfigured()) {
         return NextResponse.json(

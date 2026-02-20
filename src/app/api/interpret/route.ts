@@ -3,26 +3,33 @@
    POST /api/interpret
    ===========================
    
-   Firestore 기반 쿼터 + 엔타이틀먼트
-   OpenAI (gpt-4o-mini) 기본 + Gemini 2차 검증 (Archmage)
-   KST 자정 기준 일일 리셋
+   Core+Expand 파이프라인:
+   - Core 1회 생성 (temperature=0) → seedKey 기반 캐싱
+   - 티어별 Expand (temperature=0.3)
+   - luckyElements는 seedKey 기반 결정론적 생성 (LLM 미사용)
+   
+   가드레일: 운세 도메인 외 질문 차단 (모든 티어 동일)
+   테스트 모드: X-Tier-Override 헤더로 티어 시뮬레이션 (TEST_MODE만으로 허용)
 */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { interpretFortune } from '@/lib/ai/openai';
+import { interpretWithCoreExpand } from '@/lib/ai/coreExpand';
 import { verifyWithGemini } from '@/lib/ai/gemini';
-import type { FortuneSystem, Locale } from '@/lib/ai/prompts';
+import type { FortuneSystem, Locale, Tier } from '@/lib/ai/prompts';
 import type { TierName } from '@/lib/db/schema';
 
 // Amplify 등 서버리스 환경에서 Edge 대신 Node.js 런타임 강제
 export const runtime = 'nodejs';
 
 export async function POST(request: NextRequest) {
+    const startTime = Date.now();
+
     try {
         // 1) 인증 확인 — Firebase ID 토큰 검증 (실패해도 free 티어로 계속 진행)
         const authHeader = request.headers.get('Authorization');
         let uid: string | null = null;
         let tier: TierName = 'free';
+        let userTier: TierName = 'free'; // 실제 계정 티어
         let quotaResult = { allowed: true, remaining: 5, used: 0, limit: 5, kstDateKey: '' };
 
         if (authHeader?.startsWith('Bearer ')) {
@@ -45,6 +52,7 @@ export async function POST(request: NextRequest) {
                     if (entDoc.exists) {
                         const entitlement = entDoc.data() as import('@/lib/db/schema').EntitlementDoc;
                         tier = entitlement.tier;
+                        userTier = entitlement.tier;
 
                         // 4) 종합 분석 권한 체크
                         const body_peek = await request.clone().json();
@@ -83,11 +91,22 @@ export async function POST(request: NextRequest) {
                     }
                 } catch (entError) {
                     console.warn('[Interpret] Entitlement check failed, using free tier:', entError);
-                    // 엔타이틀먼트 조회 실패 시 free 티어로 계속 진행
                 }
             } catch (authError) {
                 console.warn('[Interpret] Auth verification failed, proceeding as anonymous:', authError);
-                // 인증 실패 시 free 티어로 계속 진행 (500 대신 graceful fallback)
+            }
+        }
+
+        // ★ X-Tier-Override: TEST_MODE만으로 허용 (admin 체크 완화)
+        const tierOverride = request.headers.get('X-Tier-Override');
+        if (tierOverride) {
+            const { isTestMode } = await import('@/lib/featureFlags');
+            if (isTestMode()) {
+                const validTiers: TierName[] = ['free', 'plus', 'pro', 'archmage'];
+                if (validTiers.includes(tierOverride as TierName)) {
+                    tier = tierOverride as TierName;
+                    console.log(`[Interpret] X-Tier-Override applied: ${tier}`);
+                }
             }
         }
 
@@ -125,6 +144,21 @@ export async function POST(request: NextRequest) {
 
         const locale: Locale = ['ko', 'ja', 'en', 'zh'].includes(reqLocale) ? reqLocale : 'ko';
 
+        // ★ 가드레일: 운세 도메인 외 질문 차단 (모든 티어 동일)
+        if (question) {
+            const { isFortuneQuery } = await import('@/lib/ai/guardrail');
+            const guardrailResult = isFortuneQuery(question, locale);
+            if (!guardrailResult.allowed) {
+                return NextResponse.json(
+                    {
+                        error: guardrailResult.reason,
+                        code: 'FORTUNE_DOMAIN_ONLY',
+                    },
+                    { status: 403 }
+                );
+            }
+        }
+
         if (!process.env.OPENAI_API_KEY) {
             console.error('[Interpret API Error] Missing OPENAI_API_KEY');
             return NextResponse.json(
@@ -133,22 +167,25 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // 6) OpenAI 해석 호출
-        const aiResult = await interpretFortune({
-            system: system as FortuneSystem,
-            locale,
-            tier,
-            question,
-            birthDate,
-            birthTime,
-            birthPlace,
-            isLunar,
-            latitude,
-            longitude,
-            drawnCards,
-            chartData,
-            gender,
-        });
+        // 6) Core+Expand 파이프라인
+        const aiResult = await interpretWithCoreExpand(
+            {
+                system: system as FortuneSystem,
+                locale,
+                question,
+                birthDate,
+                birthTime,
+                birthPlace,
+                isLunar,
+                latitude,
+                longitude,
+                drawnCards,
+                chartData,
+                gender,
+            },
+            tier as Tier,
+            userTier as Tier,
+        );
 
         // 7) Archmage 티어 → Gemini 2차 검증
         let geminiVerification = undefined;
@@ -173,13 +210,20 @@ export async function POST(request: NextRequest) {
             }
         }
 
+        const totalLatency = Date.now() - startTime;
+
         // 8) 응답 반환
         return NextResponse.json({
             ...aiResult,
             geminiVerification: geminiVerification || undefined,
-            tier,
             quotaRemaining: quotaResult.remaining,
             kstDateKey: quotaResult.kstDateKey,
+            meta: {
+                ...aiResult.meta,
+                userTier,
+                effectiveTier: tier,
+                latencyMs: totalLatency,
+            },
         });
     } catch (error) {
         console.error('[Interpret API Error]', error);
