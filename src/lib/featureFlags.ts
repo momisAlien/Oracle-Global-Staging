@@ -32,3 +32,56 @@ export const PAYMENT_DISABLED_RESPONSE = {
     error: 'Payment feature is currently disabled',
     code: 'PAYMENT_DISABLED',
 } as const;
+
+/* ---------- 광고 플래그 ---------- */
+
+export type AdsProvider = 'mock' | 'adsense' | 'gam';
+
+export interface AdsConfig {
+    adsEnabled: boolean;
+    adsBannerEnabled: boolean;
+    adsVideoEnabled: boolean;
+    adsProvider: AdsProvider;
+    adsenseClient?: string;
+    adsenseBannerSlot?: string;
+    gamNetworkCode?: string;
+    gamBannerAdUnit?: string;
+    gamVideoAdTagUrl?: string;
+}
+
+/** 광고 전체 ON/OFF */
+export function isAdsEnabled(): boolean {
+    return process.env.ADS_ENABLED === 'true';
+}
+
+/** 배너 광고 ON/OFF */
+export function isAdsBannerEnabled(): boolean {
+    return isAdsEnabled() && process.env.ADS_BANNER_ENABLED === 'true';
+}
+
+/** 영상 광고 ON/OFF */
+export function isAdsVideoEnabled(): boolean {
+    return isAdsEnabled() && process.env.ADS_VIDEO_ENABLED === 'true';
+}
+
+/** 광고 제공자 */
+export function getAdsProvider(): AdsProvider {
+    const p = process.env.ADS_PROVIDER || 'mock';
+    if (p === 'adsense' || p === 'gam') return p;
+    return 'mock';
+}
+
+/** 전체 광고 설정 객체 (API 응답용) */
+export function getAdsConfig(): AdsConfig {
+    return {
+        adsEnabled: isAdsEnabled(),
+        adsBannerEnabled: isAdsBannerEnabled(),
+        adsVideoEnabled: isAdsVideoEnabled(),
+        adsProvider: getAdsProvider(),
+        adsenseClient: process.env.ADSENSE_CLIENT,
+        adsenseBannerSlot: process.env.ADSENSE_BANNER_SLOT,
+        gamNetworkCode: process.env.GAM_NETWORK_CODE,
+        gamBannerAdUnit: process.env.GAM_BANNER_AD_UNIT,
+        gamVideoAdTagUrl: process.env.GAM_VIDEO_AD_TAG_URL,
+    };
+}

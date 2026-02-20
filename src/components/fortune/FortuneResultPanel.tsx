@@ -6,7 +6,25 @@
    =========================== */
 
 import '@/styles/fortune-result.css';
+import '@/styles/ads.css';
+import { useState, useEffect } from 'react';
 import type { InterpretResponse } from '@/lib/hooks/useInterpret';
+import { useMe } from '@/lib/hooks/useMe';
+import AdsGate from '@/components/ads/AdsGate';
+import BannerAd from '@/components/ads/BannerAd';
+import VideoAdInterstitial, { shouldShowVideoAd } from '@/components/ads/VideoAdInterstitial';
+
+interface AdsFlags {
+    enabled: boolean;
+    bannerEnabled: boolean;
+    videoEnabled: boolean;
+    provider: string;
+    adsenseClient?: string;
+    adsenseBannerSlot?: string;
+    gamNetworkCode?: string;
+    gamBannerAdUnit?: string;
+    gamVideoAdTagUrl?: string;
+}
 
 // 티어별 캐릭터 이미지 매핑
 const TIER_IMAGES: Record<string, Record<'male' | 'female', string>> = {
@@ -69,6 +87,28 @@ export default function FortuneResultPanel({
     onRetry,
 }: FortuneResultPanelProps) {
     const loc = (['ko', 'ja', 'en', 'zh'].includes(locale) ? locale : 'ko') as 'ko' | 'ja' | 'en' | 'zh';
+
+    // 광고 관련
+    const { userTier } = useMe();
+    const [adsFlags, setAdsFlags] = useState<AdsFlags | null>(null);
+    const [showVideoAd, setShowVideoAd] = useState(false);
+
+    // /api/config에서 광고 플래그 로드 (캐시됨)
+    useEffect(() => {
+        fetch('/api/config')
+            .then(r => r.json())
+            .then(d => { if (d.ads) setAdsFlags(d.ads); })
+            .catch(() => { });
+    }, []);
+
+    // 결과 도착 시 영상 광고 표시 여부 판단
+    useEffect(() => {
+        if (result && userTier === 'free' && adsFlags?.videoEnabled) {
+            if (shouldShowVideoAd()) {
+                setShowVideoAd(true);
+            }
+        }
+    }, [result, userTier, adsFlags?.videoEnabled]);
 
     /* --- 로딩 상태 --- */
     if (loading) {
@@ -210,12 +250,36 @@ export default function FortuneResultPanel({
                         </div>
                     )}
 
+                    {/* 배너 광고 (free 전용) */}
+                    {adsFlags && (
+                        <AdsGate userTier={userTier} adsEnabled={adsFlags.enabled && adsFlags.bannerEnabled}>
+                            <BannerAd
+                                provider={adsFlags.provider}
+                                adsenseClient={adsFlags.adsenseClient}
+                                adsenseBannerSlot={adsFlags.adsenseBannerSlot}
+                                gamNetworkCode={adsFlags.gamNetworkCode}
+                                gamBannerAdUnit={adsFlags.gamBannerAdUnit}
+                                locale={loc}
+                            />
+                        </AdsGate>
+                    )}
+
                     {/* 메타 정보 */}
                     <div className="fortune-meta">
                         <span className="fortune-disclaimer">{DISCLAIMER_TEXT[loc]}</span>
                     </div>
                 </div>
             </div>
+
+            {/* 영상 광고 인터스티셜 (free 전용, frequency cap) */}
+            {showVideoAd && adsFlags && (
+                <VideoAdInterstitial
+                    onComplete={() => setShowVideoAd(false)}
+                    provider={adsFlags.provider}
+                    videoAdTagUrl={adsFlags.gamVideoAdTagUrl}
+                    locale={loc}
+                />
+            )}
         </div>
     );
 }
