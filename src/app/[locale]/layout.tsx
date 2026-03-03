@@ -72,6 +72,9 @@ export default async function LocaleLayout({
                   <a href={`/${locale}/astrology`}>
                     {locale === 'ko' ? '점성술' : locale === 'ja' ? '占星術' : locale === 'zh' ? '占星术' : 'Astrology'}
                   </a>
+                  <a href={`/${locale}/horoscope`}>
+                    {locale === 'ko' ? '별자리 운세' : locale === 'ja' ? '星座占い' : locale === 'zh' ? '星座运势' : 'Horoscope'}
+                  </a>
                   <a href={`/${locale}/saju`}>
                     {locale === 'ko' ? '사주' : locale === 'ja' ? '四柱' : locale === 'zh' ? '四柱' : 'Saju'}
                   </a>
