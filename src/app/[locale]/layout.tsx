@@ -58,6 +58,11 @@ export default async function LocaleLayout({
           href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&display=swap"
           rel="stylesheet"
         />
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6816187934719502"
+          crossOrigin="anonymous"
+        />
       </head>
       <body>
         <NextIntlClientProvider messages={messages}>
