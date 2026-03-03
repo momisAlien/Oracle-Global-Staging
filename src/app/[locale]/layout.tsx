@@ -2,6 +2,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { locales, Locale } from '@/i18n/request';
+import Footer from '@/components/Footer';
 import '@/styles/globals.css';
 
 export function generateStaticParams() {
@@ -111,20 +112,7 @@ export default async function LocaleLayout({
             <main className="main-content">
               {children}
             </main>
-            <footer className="main-footer">
-              <div className="container">
-                <div className="disclaimer">
-                  {locale === 'ko'
-                    ? '본 서비스는 오락 및 개인적 성찰 목적으로만 제공됩니다.'
-                    : locale === 'ja'
-                      ? '本サービスはエンターテインメントおよび個人的な内省を目的として提供されています。'
-                      : locale === 'zh'
-                        ? '本服务仅供娱乐和个人反思之用。'
-                        : 'This service is intended for entertainment and personal reflection purposes only.'}
-                </div>
-                <p className="footer-copy">© 2026 Oracle. All rights reserved.</p>
-              </div>
-            </footer>
+            <Footer />
           </div>
         </NextIntlClientProvider>
 
