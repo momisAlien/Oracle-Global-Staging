@@ -3,13 +3,13 @@
 import { useParams } from 'next/navigation';
 
 const CONTENT: Record<string, { title: string; updated: string; body: string }> = {
-    ko: {
-        title: '개인정보 처리방침',
-        updated: '최종 수정: 2026-03-03',
-        body: `
+  ko: {
+    title: '개인정보 처리방침',
+    updated: '최종 수정: 2026-03-03',
+    body: `
 ## 1. 데이터 컨트롤러
-TarotAIHub ("서비스")는 [LEGAL_ENTITY_NAME]이(가) 운영합니다.
-- **주소:** [BUSINESS_ADDRESS]
+TarotAIHub ("서비스")는 tarotaihub가 운영합니다.
+- **주소:** 서울, 대한민국 (Seoul, Korea)
 - **이메일:** support@tarotaihub.com
 
 ## 2. 수집하는 정보
@@ -81,14 +81,14 @@ EU/EEA, 영국, 스위스 거주자는 관련 법률에 따라 다음의 권리�
 ## 12. 문의
 개인정보 관련 문의: **support@tarotaihub.com** (제목에 "Privacy Request" 기재)
 `,
-    },
-    ja: {
-        title: 'プライバシーポリシー',
-        updated: '最終更新: 2026-03-03',
-        body: `
+  },
+  ja: {
+    title: 'プライバシーポリシー',
+    updated: '最終更新: 2026-03-03',
+    body: `
 ## 1. データ管理者
-TarotAIHub（「本サービス」）は [LEGAL_ENTITY_NAME] が運営しています。
-- **住所:** [BUSINESS_ADDRESS]
+TarotAIHub（「本サービス」）は tarotaihub が運営しています。
+- **住所:** 韓国・ソウル (Seoul, Korea)
 - **メール:** support@tarotaihub.com
 
 ## 2. 収集する情報
@@ -160,14 +160,14 @@ EU/EEA、英国、スイスにお住まいの方は、関連法に基づき以�
 ## 12. お問い合わせ
 個人情報に関するお問い合わせ：**support@tarotaihub.com**（件名に「Privacy Request」とご記入ください）
 `,
-    },
-    en: {
-        title: 'Privacy Policy',
-        updated: 'Last updated: 2026-03-03',
-        body: `
+  },
+  en: {
+    title: 'Privacy Policy',
+    updated: 'Last updated: 2026-03-03',
+    body: `
 ## 1. Data Controller
-TarotAIHub (the "Service") is operated by [LEGAL_ENTITY_NAME].
-- **Address:** [BUSINESS_ADDRESS]
+TarotAIHub (the "Service") is operated by tarotaihub.
+- **Address:** Seoul, Korea
 - **Email:** support@tarotaihub.com
 
 ## 2. Information We Collect
@@ -239,14 +239,14 @@ We may update this policy from time to time. Material changes will be communicat
 ## 12. Contact Us
 For privacy-related inquiries: **support@tarotaihub.com** (please include "Privacy Request" in the subject line)
 `,
-    },
-    zh: {
-        title: '隐私政策',
-        updated: '最后更新：2026-03-03',
-        body: `
+  },
+  zh: {
+    title: '隐私政策',
+    updated: '最后更新：2026-03-03',
+    body: `
 ## 1. 数据控制者
-TarotAIHub（"本服务"）由 [LEGAL_ENTITY_NAME] 运营。
-- **地址：** [BUSINESS_ADDRESS]
+TarotAIHub（"本服务"）由 tarotaihub 运营。
+- **地址：** 韩国首尔 (Seoul, Korea)
 - **邮箱：** support@tarotaihub.com
 
 ## 2. 我们收集的信息
@@ -318,44 +318,44 @@ TarotAIHub（"本服务"）由 [LEGAL_ENTITY_NAME] 运营。
 ## 12. 联系我们
 隐私相关问询请发送邮件至：**support@tarotaihub.com**（请在主题中注明"Privacy Request"）
 `,
-    },
+  },
 };
 
 export default function PrivacyPage() {
-    const { locale } = useParams();
-    const loc = (locale as string) || 'en';
-    const c = CONTENT[loc] || CONTENT.en;
+  const { locale } = useParams();
+  const loc = (locale as string) || 'en';
+  const c = CONTENT[loc] || CONTENT.en;
 
-    return (
-        <section className="section">
-            <div className="container legal-page">
-                <h1 className="legal-title">{c.title}</h1>
-                <p className="legal-updated">{c.updated}</p>
-                <div className="legal-body" dangerouslySetInnerHTML={{ __html: markdownToHtml(c.body) }} />
-            </div>
-            <style>{LEGAL_STYLES}</style>
-        </section>
-    );
+  return (
+    <section className="section">
+      <div className="container legal-page">
+        <h1 className="legal-title">{c.title}</h1>
+        <p className="legal-updated">{c.updated}</p>
+        <div className="legal-body" dangerouslySetInnerHTML={{ __html: markdownToHtml(c.body) }} />
+      </div>
+      <style>{LEGAL_STYLES}</style>
+    </section>
+  );
 }
 
 /* simple md → html (headings, tables, bold, lists, paragraphs) */
 function markdownToHtml(md: string): string {
-    return md
-        .replace(/^## (.+)$/gm, '<h2>$1</h2>')
-        .replace(/^### (.+)$/gm, '<h3>$1</h3>')
-        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\n\| (.+)/g, (_, row) => {
-            const cells = row.split('|').map((c: string) => c.trim());
-            const tag = cells.every((c: string) => /^-+$/.test(c)) ? null : 'td';
-            if (!tag) return '';
-            return '<tr>' + cells.map((c: string) => `<${tag}>${c}</${tag}>`).join('') + '</tr>';
-        })
-        .replace(/(<tr>.*<\/tr>\n?)+/g, (table) => `<table>${table}</table>`)
-        .replace(/^- (.+)$/gm, '<li>$1</li>')
-        .replace(/(<li>.*<\/li>\n?)+/g, (list) => `<ul>${list}</ul>`)
-        .replace(/\n{2,}/g, '</p><p>')
-        .replace(/^(?!<[htuol])(.+)$/gm, '<p>$1</p>')
-        .replace(/<p><\/p>/g, '');
+  return md
+    .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+    .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\n\| (.+)/g, (_, row) => {
+      const cells = row.split('|').map((c: string) => c.trim());
+      const tag = cells.every((c: string) => /^-+$/.test(c)) ? null : 'td';
+      if (!tag) return '';
+      return '<tr>' + cells.map((c: string) => `<${tag}>${c}</${tag}>`).join('') + '</tr>';
+    })
+    .replace(/(<tr>.*<\/tr>\n?)+/g, (table) => `<table>${table}</table>`)
+    .replace(/^- (.+)$/gm, '<li>$1</li>')
+    .replace(/(<li>.*<\/li>\n?)+/g, (list) => `<ul>${list}</ul>`)
+    .replace(/\n{2,}/g, '</p><p>')
+    .replace(/^(?!<[htuol])(.+)$/gm, '<p>$1</p>')
+    .replace(/<p><\/p>/g, '');
 }
 
 const LEGAL_STYLES = `

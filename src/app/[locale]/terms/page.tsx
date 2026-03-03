@@ -42,7 +42,7 @@ TarotAIHub ("서비스")에 접속하거나 사용함으로써 귀하는 본 이
 - 다른 사용자의 서비스 이용을 방해
 
 ## 6. 지식재산권
-서비스의 모든 콘텐츠, 디자인, 소프트웨어, 기술은 [LEGAL_ENTITY_NAME] 또는 라이선스 제공자의 재산입니다. 귀하에게 서비스를 개인적·비상업적 목적으로 사용할 수 있는 제한적 라이선스가 부여됩니다.
+서비스의 모든 콘텐츠, 디자인, 소프트웨어, 기술은 tarotaihub 또는 라이선스 제공자의 재산입니다. 귀하에게 서비스를 개인적·비상업적 목적으로 사용할 수 있는 제한적 라이선스가 부여됩니다.
 
 ## 7. 보증의 부인
 법률이 허용하는 최대 범위 내에서, 서비스는 "있는 그대로" 그리고 "사용 가능한 그대로" 제공됩니다. 특정 목적 적합성, 상품성, 비침해에 대한 명시적 또는 묵시적 보증을 부인합니다.
@@ -102,7 +102,7 @@ TarotAIHub（「本サービス」）にアクセスまたは利用すること�
 - 他のユーザーのサービス利用を妨害すること
 
 ## 6. 知的財産権
-サービスのすべてのコンテンツ、デザイン、ソフトウェア、技術は [LEGAL_ENTITY_NAME] またはライセンス提供者の所有物です。お客様には個人的・非商用目的でサービスを使用する限定的なライセンスが付与されます。
+サービスのすべてのコンテンツ、デザイン、ソフトウェア、技術は tarotaihub またはライセンス提供者の所有物です。お客様には個人的・非商用目的でサービスを使用する限定的なライセンスが付与されます。
 
 ## 7. 保証の否認
 法律で認められる最大の範囲において、サービスは「現状のまま」かつ「利用可能な状態で」提供されます。特定目的への適合性、商品性、非侵害に関する明示的または黙示的保証を行いません。
@@ -162,7 +162,7 @@ The following activities are prohibited:
 - Interfering with other users' use of the Service
 
 ## 6. Intellectual Property
-All content, design, software, and technology in the Service are the property of [LEGAL_ENTITY_NAME] or its licensors. You are granted a limited, non-exclusive, non-transferable license to use the Service for personal, non-commercial purposes.
+All content, design, software, and technology in the Service are the property of tarotaihub or its licensors. You are granted a limited, non-exclusive, non-transferable license to use the Service for personal, non-commercial purposes.
 
 ## 7. Disclaimer of Warranties
 To the maximum extent permitted by law, the Service is provided "AS IS" and "AS AVAILABLE." We disclaim all warranties, whether express or implied, including warranties of merchantability, fitness for a particular purpose, and non-infringement.
@@ -222,7 +222,7 @@ We may update these Terms from time to time. Material changes will be communicat
 - 干扰其他用户使用服务
 
 ## 6. 知识产权
-服务中的所有内容、设计、软件和技术均为 [LEGAL_ENTITY_NAME] 或其许可方的财产。我们授予您有限的、非独占性的、不可转让的许可，以个人非商业目的使用本服务。
+服务中的所有内容、设计、软件和技术均为 tarotaihub 或其许可方的财产。我们授予您有限的、非独占性的、不可转让的许可，以个人非商业目的使用本服务。
 
 ## 7. 免责声明
 在法律允许的最大范围内，本服务按"原样"和"可用状态"提供。我们不做任何明示或暗示的保证，包括但不限于适销性、特定用途适用性和非侵权的保证。

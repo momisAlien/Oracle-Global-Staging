@@ -35,6 +35,13 @@ const CONTENT: Record<string, { title: string; body: string }> = {
 
 ---
 
+## 운영자 정보
+- **운영:** tarotaihub
+- **소재지:** 서울, 대한민국 (Seoul, Korea)
+- **이메일:** support@tarotaihub.com
+
+---
+
 저희는 여러분의 소중한 의견을 기다립니다. 더 나은 서비스를 위해 항상 노력하겠습니다.
 `,
     },
@@ -67,6 +74,13 @@ const CONTENT: Record<string, { title: string; body: string }> = {
 ### 🔒 プライバシー/データ削除のリクエスト
 - プライバシーに関するリクエストの場合、メールの件名に **「Privacy Request」** とご記入ください。
 - 例：データへのアクセス、修正、削除のリクエスト
+
+---
+
+## 運営者情報
+- **運営:** tarotaihub
+- **所在地:** 韓国・ソウル (Seoul, Korea)
+- **メール:** support@tarotaihub.com
 
 ---
 
@@ -105,6 +119,13 @@ If you have questions, suggestions, or encounter any issues, please reach out to
 
 ---
 
+## Operator
+- **Operated by:** tarotaihub
+- **Location:** Seoul, Korea
+- **Email:** support@tarotaihub.com
+
+---
+
 We value your feedback and are committed to improving our service. Don't hesitate to reach out!
 `,
     },
@@ -137,6 +158,13 @@ We value your feedback and are committed to improving our service. Don't hesitat
 ### 🔒 隐私/数据删除请求
 - 如有隐私相关请求，请在邮件主题中注明 **"Privacy Request"**。
 - 例如：数据访问、更正或删除请求。
+
+---
+
+## 运营者信息
+- **运营方：** tarotaihub
+- **地址：** 韩国首尔 (Seoul, Korea)
+- **邮箱：** support@tarotaihub.com
 
 ---
 
