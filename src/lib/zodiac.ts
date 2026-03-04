@@ -166,3 +166,123 @@ export function formatDateRange(sign: ZodiacSign, locale: string): string {
     const m = months[locale] || months.en;
     return `${m[sign.startMonth - 1]} ${sign.startDay} – ${m[sign.endMonth - 1]} ${sign.endDay}`;
 }
+
+/* ===========================
+   Chinese Zodiac — 띠 (12지)
+   ===========================
+   출생 연도 기반 12띠 판별
+*/
+
+export interface ChineseZodiacAnimal {
+    id: string;
+    emoji: string;
+    element: 'wood' | 'fire' | 'earth' | 'metal' | 'water';
+    branch: string; // 지지(地支)
+    names: Record<string, string>;
+    traits: Record<string, string>;
+    years: number[]; // 대표 연도 (2000년대 기준)
+}
+
+export const CHINESE_ZODIAC_ANIMALS: ChineseZodiacAnimal[] = [
+    {
+        id: 'rat', emoji: '🐀', element: 'water', branch: '子',
+        names: { ko: '쥐띠', ja: '子年', en: 'Rat', zh: '鼠' },
+        traits: { ko: '지혜, 재치, 적응력', ja: '知恵、機知、適応力', en: 'Wise, Resourceful, Adaptable', zh: '聪明、机智、适应力强' },
+        years: [1948, 1960, 1972, 1984, 1996, 2008, 2020],
+    },
+    {
+        id: 'ox', emoji: '🐂', element: 'earth', branch: '丑',
+        names: { ko: '소띠', ja: '丑年', en: 'Ox', zh: '牛' },
+        traits: { ko: '성실, 인내, 책임감', ja: '勤勉、忍耐、責任感', en: 'Diligent, Patient, Responsible', zh: '勤劳、有耐心、负责' },
+        years: [1949, 1961, 1973, 1985, 1997, 2009, 2021],
+    },
+    {
+        id: 'tiger', emoji: '🐅', element: 'wood', branch: '寅',
+        names: { ko: '호랑이띠', ja: '寅年', en: 'Tiger', zh: '虎' },
+        traits: { ko: '용감, 열정, 리더십', ja: '勇敢、情熱、リーダーシップ', en: 'Brave, Passionate, Leadership', zh: '勇敢、热情、有领导力' },
+        years: [1950, 1962, 1974, 1986, 1998, 2010, 2022],
+    },
+    {
+        id: 'rabbit', emoji: '🐇', element: 'wood', branch: '卯',
+        names: { ko: '토끼띠', ja: '卯年', en: 'Rabbit', zh: '兔' },
+        traits: { ko: '온화, 세심, 예술적', ja: '穏やか、細やか、芸術的', en: 'Gentle, Careful, Artistic', zh: '温和、细心、有艺术感' },
+        years: [1951, 1963, 1975, 1987, 1999, 2011, 2023],
+    },
+    {
+        id: 'dragon', emoji: '🐉', element: 'earth', branch: '辰',
+        names: { ko: '용띠', ja: '辰年', en: 'Dragon', zh: '龙' },
+        traits: { ko: '카리스마, 자신감, 야망', ja: 'カリスマ、自信、野望', en: 'Charismatic, Confident, Ambitious', zh: '有魅力、自信、有野心' },
+        years: [1952, 1964, 1976, 1988, 2000, 2012, 2024],
+    },
+    {
+        id: 'snake', emoji: '🐍', element: 'fire', branch: '巳',
+        names: { ko: '뱀띠', ja: '巳年', en: 'Snake', zh: '蛇' },
+        traits: { ko: '지혜, 직관, 우아함', ja: '知恵、直感、優雅', en: 'Wise, Intuitive, Elegant', zh: '智慧、直觉、优雅' },
+        years: [1953, 1965, 1977, 1989, 2001, 2013, 2025],
+    },
+    {
+        id: 'horse', emoji: '🐴', element: 'fire', branch: '午',
+        names: { ko: '말띠', ja: '午年', en: 'Horse', zh: '马' },
+        traits: { ko: '활동적, 자유로운, 열정', ja: '活動的、自由、情熱的', en: 'Active, Free-spirited, Passionate', zh: '活跃、自由、热情' },
+        years: [1954, 1966, 1978, 1990, 2002, 2014, 2026],
+    },
+    {
+        id: 'goat', emoji: '🐑', element: 'earth', branch: '未',
+        names: { ko: '양띠', ja: '未年', en: 'Goat', zh: '羊' },
+        traits: { ko: '온순, 창의적, 감성적', ja: '温順、創造的、感性的', en: 'Gentle, Creative, Sensitive', zh: '温顺、有创意、感性' },
+        years: [1955, 1967, 1979, 1991, 2003, 2015, 2027],
+    },
+    {
+        id: 'monkey', emoji: '🐒', element: 'metal', branch: '申',
+        names: { ko: '원숭이띠', ja: '申年', en: 'Monkey', zh: '猴' },
+        traits: { ko: '영리, 유머, 다재다능', ja: '賢い、ユーモア、多才', en: 'Clever, Humorous, Versatile', zh: '聪明、幽默、多才多艺' },
+        years: [1956, 1968, 1980, 1992, 2004, 2016, 2028],
+    },
+    {
+        id: 'rooster', emoji: '🐓', element: 'metal', branch: '酉',
+        names: { ko: '닭띠', ja: '酉年', en: 'Rooster', zh: '鸡' },
+        traits: { ko: '근면, 정직, 용감', ja: '勤勉、正直、勇敢', en: 'Hardworking, Honest, Courageous', zh: '勤劳、诚实、勇敢' },
+        years: [1957, 1969, 1981, 1993, 2005, 2017, 2029],
+    },
+    {
+        id: 'dog', emoji: '🐕', element: 'earth', branch: '戌',
+        names: { ko: '개띠', ja: '戌年', en: 'Dog', zh: '狗' },
+        traits: { ko: '충성, 정의감, 신뢰', ja: '忠誠、正義感、信頼', en: 'Loyal, Just, Trustworthy', zh: '忠诚、有正义感、可信赖' },
+        years: [1958, 1970, 1982, 1994, 2006, 2018, 2030],
+    },
+    {
+        id: 'pig', emoji: '🐖', element: 'water', branch: '亥',
+        names: { ko: '돼지띠', ja: '亥年', en: 'Pig', zh: '猪' },
+        traits: { ko: '낙관적, 관대, 성실', ja: '楽観的、寛大、誠実', en: 'Optimistic, Generous, Sincere', zh: '乐观、慷慨、诚实' },
+        years: [1959, 1971, 1983, 1995, 2007, 2019, 2031],
+    },
+];
+
+/** 오행 색상 (Chinese five elements) */
+export const CZ_ELEMENT_COLORS: Record<string, string> = {
+    wood: '#22c55e',
+    fire: '#ef4444',
+    earth: '#eab308',
+    metal: '#94a3b8',
+    water: '#3b82f6',
+};
+
+/** 오행 아이콘 */
+export const CZ_ELEMENT_ICONS: Record<string, string> = {
+    wood: '🌳',
+    fire: '🔥',
+    earth: '🏔️',
+    metal: '⚙️',
+    water: '💧',
+};
+
+/**
+ * 출생 연도 → 띠 판별
+ * @param birthYear - 출생 연도 (양력)
+ * @returns ChineseZodiacAnimal
+ */
+export function getChineseZodiac(birthYear: number): ChineseZodiacAnimal {
+    // 12지 순서: 쥐(子)부터 시작, 기준년도 2020 = 쥐띠
+    const idx = ((birthYear - 2020) % 12 + 12) % 12;
+    return CHINESE_ZODIAC_ANIMALS[idx];
+}

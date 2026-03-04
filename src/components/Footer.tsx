@@ -9,7 +9,7 @@ const FOOTER_LABELS: Record<string, Record<string, string>> = {
   saju: { ko: '사주', ja: '四柱推命', en: 'Saju', zh: '四柱' },
   tarot: { ko: '타로', ja: 'タロット', en: 'Tarot', zh: '塔罗' },
   astrology: { ko: '점성술', ja: '占星術', en: 'Astrology', zh: '占星术' },
-  horoscope: { ko: '별자리 운세', ja: '星座占い', en: 'Horoscope', zh: '星座运势' },
+  horoscope: { ko: '별자리 및 띠 운세', ja: '星座・干支占い', en: 'Zodiac & Chinese Zodiac', zh: '星座与生肖运势' },
   todayReport: { ko: '오늘의 운세', ja: '今日の運勢', en: "Today's Fortune", zh: '今日运势' },
   love: { ko: '연애 운세', ja: '恋愛占い', en: 'Love Fortune', zh: '恋爱运势' },
   privacy: { ko: '개인정보 처리방침', ja: 'プライバシーポリシー', en: 'Privacy Policy', zh: '隐私政策' },

@@ -70,7 +70,7 @@ export default function LandingPage() {
               const config = MODULE_CONFIG[mod];
               const names: Record<string, Record<string, string>> = {
                 astrology: { ko: '점성술', ja: '占星術', en: 'Astrology', zh: '占星术' },
-                horoscope: { ko: '별자리 운세', ja: '星座占い', en: 'Horoscope', zh: '星座运势' },
+                horoscope: { ko: '별자리 및 띠 운세', ja: '星座・干支占い', en: 'Zodiac & Chinese Zodiac', zh: '星座与生肖运势' },
                 saju: { ko: '사주팔자', ja: '四柱推命', en: 'Four Pillars', zh: '四柱八字' },
                 tarot: { ko: '타로', ja: 'タロット', en: 'Tarot', zh: '塔罗牌' },
                 'today-report': { ko: '오늘의 운세', ja: '今日の運勢', en: "Today's Fortune", zh: '今日运势' },
@@ -84,10 +84,10 @@ export default function LandingPage() {
                   zh: '基于星历的精确出生星盘分析',
                 },
                 horoscope: {
-                  ko: '생년월일 기반 별자리 운세 · 매일 업데이트',
-                  ja: '生年月日に基づく星座占い・毎日更新',
-                  en: 'Birthdate-based zodiac fortune · Updated daily',
-                  zh: '根据出生日期的星座运势 · 每日更新',
+                  ko: '별자리 및 띠 기반 운세 · 매일 업데이트',
+                  ja: '星座・干支に基づく運勢・毎日更新',
+                  en: 'Zodiac & Chinese zodiac fortune · Updated daily',
+                  zh: '星座前生肖运势 · 每日更新',
                 },
                 saju: {
                   ko: '절기 기준 사주팔자·십신·오행·대운 분석',
