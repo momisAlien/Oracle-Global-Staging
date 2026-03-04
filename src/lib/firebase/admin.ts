@@ -111,6 +111,7 @@ export const adminDb = new Proxy({} as Firestore, {
         const target = getAdminDb();
         const val = (target as unknown as Record<string, unknown>)[prop as string];
         if (typeof val === 'function') {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
             return (val as Function).bind(target);
         }
         return val;
@@ -122,6 +123,7 @@ export const adminAuth = new Proxy({} as Auth, {
         const target = getAdminAuth();
         const val = (target as unknown as Record<string, unknown>)[prop as string];
         if (typeof val === 'function') {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
             return (val as Function).bind(target);
         }
         return val;

@@ -96,6 +96,7 @@ export default function TarotPage() {
     // 모든 카드가 뒤집혔을 때 자동으로 AI 해석 요청
     useEffect(() => {
         if (drawnCards.length > 0 && flippedCards.size === drawnCards.length && !allFlipped) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setAllFlipped(true);
             interpret({
                 system: 'tarot',

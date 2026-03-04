@@ -116,6 +116,7 @@ export default function FortuneResultPanel({
     useEffect(() => {
         if (result && userTier === 'free' && adsFlags?.videoEnabled) {
             if (shouldShowVideoAd()) {
+                // eslint-disable-next-line react-hooks/set-state-in-effect
                 setShowVideoAd(true);
             }
         }

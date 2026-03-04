@@ -1,0 +1,118 @@
+﻿
+> oracle-global@0.1.0 lint
+> eslint
+
+
+D:\?대낫??oracle-global\src\app\[locale]\account\page.tsx
+  60:8  warning  React Hook useEffect has a missing dependency: 'loadEntitlement'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+D:\?대낫??oracle-global\src\app\[locale]\checkout\toss\page.tsx
+  10:7   warning  'TOSS_SDK_URL' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  26:12  warning  'clientKey' is assigned a value but never used     @typescript-eslint/no-unused-vars
+
+D:\?대낫??oracle-global\src\app\[locale]\grade\page.tsx
+  125:9  error  Error: This value cannot be modified
+
+Modifying a variable defined outside a component or hook is not allowed. Consider using an effect.
+
+D:\?대낫??oracle-global\src\app\[locale]\grade\page.tsx:125:9
+  123 |
+  124 |         // Save to cookie + localStorage
+> 125 |         document.cookie = `${GRADE_COOKIE}=${tierId};path=/;max-age=${60 * 60 * 24 * 365}`;
+      |         ^^^^^^^^ value cannot be modified
+  126 |         localStorage.setItem(GRADE_COOKIE, tierId);
+  127 |
+  128 |         // If logged in, save to profile via API  react-hooks/immutability
+
+D:\?대낫??oracle-global\src\app\[locale]\layout.tsx
+  58:9  warning  Custom fonts not added in `pages/_document.js` will only load for a single page. This is discouraged. See: https://nextjs.org/docs/messages/no-page-custom-font  @next/next/no-page-custom-font
+
+D:\?대낫??oracle-global\src\app\[locale]\mypage\page.tsx
+  28:11  warning  'router' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-unused-vars
+  76:23  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+D:\?대낫??oracle-global\src\app\[locale]\mypage\page.tsx:76:23
+  74 |
+  75 |     useEffect(() => {
+> 76 |         const unsub = checkAuth();
+     |                       ^^^^^^^^^ Avoid calling setState() directly within an effect
+  77 |         return () => { if (unsub) unsub(); };
+  78 |     }, [checkAuth]);
+  79 |  react-hooks/set-state-in-effect
+
+D:\?대낫??oracle-global\src\app\[locale]\pricing\page.tsx
+  168:33  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  251:37  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\?대낫??oracle-global\src\app\[locale]\saju\page.tsx
+  19:59  warning  'reset' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+D:\?대낫??oracle-global\src\app\[locale]\tarot\page.tsx
+   99:13  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+D:\?대낫??oracle-global\src\app\[locale]\tarot\page.tsx:99:13
+   97 |     useEffect(() => {
+   98 |         if (drawnCards.length > 0 && flippedCards.size === drawnCards.length && !allFlipped) {
+>  99 |             setAllFlipped(true);
+      |             ^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  100 |             interpret({
+  101 |                 system: 'tarot',
+  102 |                 locale: loc,  react-hooks/set-state-in-effect
+  111:8   warning  React Hook useEffect has a missing dependency: 'gender'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       react-hooks/exhaustive-deps
+  238:45  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         @next/next/no-img-element
+
+D:\?대낫??oracle-global\src\app\api\interpret\route.ts
+  188:50  warning  'markTrialUsed' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+D:\?대낫??oracle-global\src\components\fortune\FortuneResultPanel.tsx
+  119:17  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+D:\?대낫??oracle-global\src\components\fortune\FortuneResultPanel.tsx:119:17
+  117 |         if (result && userTier === 'free' && adsFlags?.videoEnabled) {
+  118 |             if (shouldShowVideoAd()) {
+> 119 |                 setShowVideoAd(true);
+      |                 ^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  120 |             }
+  121 |         }
+  122 |     }, [result, userTier, adsFlags?.videoEnabled]);  react-hooks/set-state-in-effect
+  230:21  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 @next/next/no-img-element
+
+D:\?대낫??oracle-global\src\lib\ai\coreExpand.ts
+   44:7   warning  'MAX_CHARS' is assigned a value but never used     @typescript-eslint/no-unused-vars
+  441:11  warning  'totalLatency' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+D:\?대낫??oracle-global\src\lib\ai\gemini.ts
+  9:5  warning  'RESPONSE_FORMAT_INSTRUCTION' is defined but never used  @typescript-eslint/no-unused-vars
+
+D:\?대낫??oracle-global\src\lib\firebase\admin.ts
+  114:28  error  The `Function` type accepts any function-like value.
+Prefer explicitly defining any function parameters and return type  @typescript-eslint/no-unsafe-function-type
+  125:28  error  The `Function` type accepts any function-like value.
+Prefer explicitly defining any function parameters and return type  @typescript-eslint/no-unsafe-function-type
+
+D:\?대낫??oracle-global\src\lib\payments\toss\provider.ts
+  126:25  warning  'input' is defined but never used  @typescript-eslint/no-unused-vars
+
+D:\?대낫??oracle-global\src\lib\tiers\index.ts
+  138:5  warning  '_promoUsedFlags' is defined but never used  @typescript-eslint/no-unused-vars
+
+??23 problems (6 errors, 17 warnings)
+

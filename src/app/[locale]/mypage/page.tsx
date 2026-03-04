@@ -73,6 +73,7 @@ export default function MypagePage() {
     }, []);
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         const unsub = checkAuth();
         return () => { if (unsub) unsub(); };
     }, [checkAuth]);

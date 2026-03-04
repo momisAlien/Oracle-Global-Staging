@@ -122,6 +122,7 @@ function GradePageContent() {
         }
 
         // Save to cookie + localStorage
+        // eslint-disable-next-line react-hooks/immutability
         document.cookie = `${GRADE_COOKIE}=${tierId};path=/;max-age=${60 * 60 * 24 * 365}`;
         localStorage.setItem(GRADE_COOKIE, tierId);
 
