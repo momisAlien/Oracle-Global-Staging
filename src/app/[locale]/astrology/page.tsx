@@ -20,7 +20,7 @@ export default function AstrologyPage() {
     const [question, setQuestion] = useState('');
     const [showChart, setShowChart] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
-    const { result, loading, error, interpret } = useInterpret();
+    const { result, loading, error, errorCode, interpret } = useInterpret();
 
     const labels: Record<string, Record<string, string>> = {
         title: { ko: '점성술 출생차트', ja: '出生チャート', en: 'Natal Birth Chart', zh: '出生星盘' },
@@ -347,6 +347,7 @@ export default function AstrologyPage() {
                     result={result}
                     loading={loading}
                     error={error}
+                    errorCode={errorCode}
                     gender={gender}
                     locale={loc}
                     onRetry={handleAnalyze}

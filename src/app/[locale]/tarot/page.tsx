@@ -44,7 +44,7 @@ export default function TarotPage() {
     const [question, setQuestion] = useState('');
     const [allFlipped, setAllFlipped] = useState(false);
     const [cardSet, setCardSet] = useState<'a' | 'b' | 'c'>('a');
-    const { result, loading, error, interpret } = useInterpret();
+    const { result, loading, error, errorCode, interpret } = useInterpret();
 
     const labels: Record<string, Record<string, string>> = {
         title: { ko: '타로 카드', ja: 'タロットカード', en: 'Tarot Cards', zh: '塔罗牌' },
@@ -292,6 +292,7 @@ export default function TarotPage() {
                     result={result}
                     loading={loading}
                     error={error}
+                    errorCode={errorCode}
                     gender={gender}
                     locale={loc}
                     onRetry={() => {

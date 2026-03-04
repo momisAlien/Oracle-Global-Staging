@@ -87,6 +87,9 @@ export default async function LocaleLayout({
                   <a href={`/${locale}/tarot`}>
                     {locale === 'ko' ? '타로' : locale === 'ja' ? 'タロット' : locale === 'zh' ? '塔罗' : 'Tarot'}
                   </a>
+                  <a href={`/${locale}/grade`} className="nav-grade">
+                    {locale === 'ko' ? '🔮 술사 변경' : locale === 'ja' ? '🔮 術士変更' : locale === 'zh' ? '🔮 更换术士' : '🔮 Change Seer'}
+                  </a>
                   <a href={`/${locale}/pricing`} className="nav-pricing">
                     {locale === 'ko' ? '요금제' : locale === 'ja' ? '料金' : locale === 'zh' ? '价格' : 'Pricing'}
                   </a>

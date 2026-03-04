@@ -58,7 +58,7 @@ export default function TodayReportPage() {
     const [focus, setFocus] = useState('');
     const [zodiac, setZodiac] = useState('');
     const [gender, setGender] = useState<'male' | 'female'>('female');
-    const { result, loading, error, interpret } = useInterpret();
+    const { result, loading, error, errorCode, interpret } = useInterpret();
 
     const handleAnalyze = () => {
         const today = new Date().toLocaleDateString(
@@ -203,6 +203,7 @@ export default function TodayReportPage() {
                     result={result}
                     loading={loading}
                     error={error}
+                    errorCode={errorCode}
                     gender={gender}
                     locale={loc}
                     onRetry={handleAnalyze}

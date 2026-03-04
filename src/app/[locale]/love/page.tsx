@@ -74,7 +74,7 @@ export default function LovePage() {
     const [relationship, setRelationship] = useState('flirting');
     const [contextB, setContextB] = useState('');
 
-    const { result, loading, error, interpret, reset } = useInterpret();
+    const { result, loading, error, errorCode, interpret, reset } = useInterpret();
 
     const relLabels = L.relOptions[loc]?.split('|') || L.relOptions.en.split('|');
 
@@ -317,6 +317,7 @@ export default function LovePage() {
                     result={result}
                     loading={loading}
                     error={error}
+                    errorCode={errorCode}
                     gender={gender}
                     locale={loc}
                     onRetry={handleAnalyze}

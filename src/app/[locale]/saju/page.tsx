@@ -16,7 +16,7 @@ export default function SajuPage() {
     const [gender, setGender] = useState<'male' | 'female'>('female');
     const [question, setQuestion] = useState('');
     const [showChart, setShowChart] = useState(false);
-    const { result, loading, error, interpret, reset } = useInterpret();
+    const { result, loading, error, errorCode, interpret, reset } = useInterpret();
 
     // 출생 정보 입력 시 실시간 사주 계산
     const sajuResult = useMemo(() => {
@@ -266,6 +266,7 @@ export default function SajuPage() {
                     result={result}
                     loading={loading}
                     error={error}
+                    errorCode={errorCode}
                     gender={gender}
                     locale={loc}
                     onRetry={() => handleAnalyze()}

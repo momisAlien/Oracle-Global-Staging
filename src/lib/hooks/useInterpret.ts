@@ -40,6 +40,7 @@ interface UseInterpretReturn {
     result: InterpretResponse | null;
     loading: boolean;
     error: string | null;
+    errorCode: string | null;
     interpret: (params: InterpretParams) => Promise<void>;
     reset: () => void;
 }
@@ -59,14 +60,23 @@ interface InterpretParams {
     gender?: 'male' | 'female';
 }
 
+/** Read a cookie value by name (client-side) */
+function getCookie(name: string): string | undefined {
+    if (typeof document === 'undefined') return undefined;
+    const match = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '=([^;]*)'));
+    return match ? decodeURIComponent(match[1]) : undefined;
+}
+
 export function useInterpret(): UseInterpretReturn {
     const [result, setResult] = useState<InterpretResponse | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [errorCode, setErrorCode] = useState<string | null>(null);
 
     const interpret = useCallback(async (params: InterpretParams) => {
         setLoading(true);
         setError(null);
+        setErrorCode(null);
         setResult(null);
 
         try {
@@ -79,18 +89,23 @@ export function useInterpret(): UseInterpretReturn {
                 idToken = await user.getIdToken();
             }
 
+            // Read selected grade from cookie
+            const grade = getCookie('tarotai_grade') || 'free';
+
             const response = await fetch('/api/interpret', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     ...(idToken ? { Authorization: `Bearer ${idToken}` } : {}),
                 },
-                body: JSON.stringify(params),
+                body: JSON.stringify({ ...params, grade }),
             });
 
             if (!response.ok) {
                 const errData = await response.json().catch(() => ({}));
-                throw new Error(errData.error || `HTTP ${response.status}`);
+                const code = errData.code || errData.errorCode || '';
+                setErrorCode(code);
+                throw new Error(errData.error || errData.message || `HTTP ${response.status}`);
             }
 
             const data = await response.json();
@@ -106,8 +121,9 @@ export function useInterpret(): UseInterpretReturn {
     const reset = useCallback(() => {
         setResult(null);
         setError(null);
+        setErrorCode(null);
         setLoading(false);
     }, []);
 
-    return { result, loading, error, interpret, reset };
+    return { result, loading, error, errorCode, interpret, reset };
 }

@@ -58,7 +58,7 @@ export default function HoroscopePage() {
     const [selectedAnimal, setSelectedAnimal] = useState<ChineseZodiacAnimal | null>(null);
     const [gender, setGender] = useState<'male' | 'female'>('female');
     const [question, setQuestion] = useState('');
-    const { result, loading, error, interpret } = useInterpret();
+    const { result, loading, error, errorCode, interpret } = useInterpret();
 
     // 생년월일로 별자리 자동 감지
     const detectedSign = useMemo(() => {
@@ -241,6 +241,7 @@ export default function HoroscopePage() {
                     result={result}
                     loading={loading}
                     error={error}
+                    errorCode={errorCode}
                     gender={gender}
                     locale={loc}
                     onRetry={handleAnalyze}

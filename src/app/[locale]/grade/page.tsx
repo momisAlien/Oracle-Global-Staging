@@ -10,8 +10,8 @@
    - PRO/ARCHMAGE: 로그인 필요
 */
 
-import { useParams, useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { useState, useEffect, Suspense } from 'react';
 import { getClientAuth } from '@/lib/firebase/client';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { TIER_ORDER, TIER_NAMES, TIER_COLORS, TIER_AURA } from '@/lib/tiers';
@@ -54,16 +54,16 @@ const TIER_DESCRIPTIONS: Record<string, Record<string, string>> = {
 
 const LABELS: Record<string, Record<string, string>> = {
     title: {
-        ko: '등급을 선택하세요',
-        ja: 'グレードを選択',
-        en: 'Choose Your Grade',
-        zh: '选择您的等级',
+        ko: '원하는 점술사를 선택하세요',
+        ja: '占い師を選んでください',
+        en: 'Choose Your Seer',
+        zh: '选择你的占卜师',
     },
     subtitle: {
-        ko: '등급에 따라 운세 분석의 깊이와 품질이 달라집니다',
-        ja: 'グレードにより占い分析の深さと品質が変わります',
-        en: 'Grade determines the depth and quality of your fortune analysis',
-        zh: '等级决定运势分析的深度和质量',
+        ko: '첫 질문 1회는 무료입니다. 등급에 따라 분석의 깊이가 달라집니다.',
+        ja: '最初の質問は無料です。グレードにより分析の深さが変わります。',
+        en: 'Your first question is free. Grade determines depth of analysis.',
+        zh: '首次提问免费。等级决定分析的深度。',
     },
     freeLabel: {
         ko: '무료',
@@ -91,10 +91,12 @@ const LABELS: Record<string, Record<string, string>> = {
     },
 };
 
-export default function GradePage() {
+function GradePageContent() {
     const { locale } = useParams();
     const router = useRouter();
+    const searchParams = useSearchParams();
     const loc = (locale as string) || 'ko';
+    const nextPath = searchParams.get('next');
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
     const [showLoginModal, setShowLoginModal] = useState(false);
@@ -137,8 +139,9 @@ export default function GradePage() {
             });
         }
 
-        // Redirect to home
-        router.push(`/${loc}`);
+        // Redirect to next path or home
+        const destination = nextPath || `/${loc}`;
+        router.push(destination);
     };
 
     if (loading) {
@@ -374,5 +377,13 @@ export default function GradePage() {
                 }
             `}</style>
         </>
+    );
+}
+
+export default function GradePage() {
+    return (
+        <Suspense fallback={<div style={{ textAlign: 'center', padding: '4rem' }}><div className="fortune-loading-orb" /></div>}>
+            <GradePageContent />
+        </Suspense>
     );
 }
