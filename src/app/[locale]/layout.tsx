@@ -3,6 +3,7 @@ import { getMessages, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { locales, Locale } from '@/i18n/request';
 import Footer from '@/components/Footer';
+import NavAuthButton from '@/components/NavAuthButton';
 import '@/styles/globals.css';
 
 export function generateStaticParams() {
@@ -107,6 +108,7 @@ export default async function LocaleLayout({
                       </a>
                     ))}
                   </div>
+                  <NavAuthButton locale={locale} />
                 </div>
               </div>
             </nav>
@@ -192,6 +194,32 @@ export default async function LocaleLayout({
             color: white;
           }
           .locale-btn:hover:not(.active) {
+            color: var(--color-text-primary);
+          }
+          .nav-auth-btn {
+            padding: var(--space-1) var(--space-3);
+            border-radius: var(--radius-full);
+            font-size: var(--text-xs);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            border: none;
+            text-decoration: none;
+          }
+          .nav-auth-login {
+            background: linear-gradient(135deg, var(--color-accent-primary), var(--color-accent-secondary));
+            color: white;
+          }
+          .nav-auth-login:hover {
+            opacity: 0.85;
+          }
+          .nav-auth-logout {
+            background: rgba(255,255,255,0.08);
+            color: var(--color-text-secondary);
+            border: 1px solid rgba(255,255,255,0.12);
+          }
+          .nav-auth-logout:hover {
+            background: rgba(255,255,255,0.15);
             color: var(--color-text-primary);
           }
           .main-content {

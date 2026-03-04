@@ -26,6 +26,7 @@ import type { TierName } from '@/lib/db/schema';
 
 // Amplify 등 서버리스 환경에서 Edge 대신 Node.js 런타임 강제
 export const runtime = 'nodejs';
+export const maxDuration = 60; // Vercel Pro: 최대 60초 허용
 
 export async function POST(request: NextRequest) {
     const startTime = Date.now();
@@ -86,6 +87,19 @@ export async function POST(request: NextRequest) {
                 if (isFirstTrial) {
                     // Force ARCHMAGE for the first reading
                     tier = 'archmage';
+
+                    // ★ 첫 trial도 사용량 기록 (거부X, 카운트만)
+                    try {
+                        const { entitlementPath } = await import('@/lib/db/paths');
+                        const { checkAndIncrementQuota } = await import('@/lib/db/quota');
+                        const entDoc = await adminDb.doc(entitlementPath(uid)).get();
+                        const limit = entDoc.exists
+                            ? (entDoc.data() as import('@/lib/db/schema').EntitlementDoc).dailyQuestionLimit
+                            : 5;
+                        quotaResult = await checkAndIncrementQuota(uid, limit);
+                    } catch (qErr) {
+                        console.warn('[Interpret] First trial quota tracking failed:', qErr);
+                    }
                 } else {
                     // Normal flow: check entitlement + credits
                     // 3) 엔타이틀먼트 조회
@@ -342,9 +356,9 @@ export async function POST(request: NextRequest) {
             }
         }
 
-        // 7) Archmage 티어 → Gemini 2차 검증
+        // 7) Archmage 티어 → Gemini 2차 검증 (첫 trial 제외: 타임아웃 방지)
         let geminiVerification = undefined;
-        if (tier === 'archmage' && process.env.GEMINI_API_KEY) {
+        if (tier === 'archmage' && process.env.GEMINI_API_KEY && !isFirstTrial) {
             try {
                 geminiVerification = await verifyWithGemini({
                     system: system as FortuneSystem,

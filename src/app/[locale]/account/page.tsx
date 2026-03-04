@@ -173,22 +173,6 @@ export default function AccountPage() {
                         <div style={{ fontWeight: 600 }}>{user.email}</div>
                     </div>
 
-                    <div style={{ marginBottom: '1.5rem' }}>
-                        <div style={{ opacity: 0.7, fontSize: '0.85rem', marginBottom: '0.25rem' }}>
-                            UID
-                        </div>
-                        <div style={{
-                            fontFamily: 'monospace',
-                            fontSize: '0.8rem',
-                            background: 'rgba(255,255,255,0.05)',
-                            padding: '0.5rem',
-                            borderRadius: '8px',
-                            wordBreak: 'break-all',
-                        }}>
-                            {user.uid}
-                        </div>
-                    </div>
-
                     {/* 티어 + 엔타이틀먼트 */}
                     {entitlement && (
                         <div style={{
