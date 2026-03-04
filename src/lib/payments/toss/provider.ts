@@ -41,7 +41,7 @@ export class TossPaymentProvider implements IPaymentProvider {
         );
 
         const orderId = `oracle-${input.tier}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-        const orderName = `Oracle ${plan.promoLabel || input.tier} 구독`;
+        const orderName = `Tarotaihub ${plan.promoLabel || input.tier} 구독`;
         const purchaseId = `pur_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
 
         // Firestore에 PENDING 구매 기록 생성은 API 라우트에서 처리

@@ -157,27 +157,6 @@ export default function FortuneResultPanel({
             );
         }
 
-        // LOGIN_REQUIRED_FOR_GRADE — 프리미엄 등급 로그인 필요
-        if (errorCode === 'LOGIN_REQUIRED_FOR_GRADE') {
-            return (
-                <div className="fortune-result">
-                    <div style={{ textAlign: 'center', padding: 'var(--space-8) var(--space-4)', background: 'linear-gradient(135deg, rgba(168,85,247,0.08), rgba(245,158,11,0.08))', borderRadius: 'var(--radius-xl)', border: '1px solid rgba(168,85,247,0.25)' }}>
-                        <div style={{ fontSize: '3rem', marginBottom: 'var(--space-3)' }}>🔒</div>
-                        <h3 style={{ fontSize: 'var(--text-xl)', fontWeight: 700, marginBottom: 'var(--space-2)' }}>
-                            {loc === 'ko' ? '프리미엄 등급은 로그인이 필요합니다' : loc === 'ja' ? 'プレミアムグレードにはログインが必要です' : loc === 'zh' ? '高级等级需要登录' : 'Premium grades require login'}
-                        </h3>
-                        <p style={{ color: 'var(--color-text-secondary)', lineHeight: 1.6, marginBottom: 'var(--space-4)', whiteSpace: 'pre-line' }}>
-                            {loc === 'ko' ? 'Pro/Archmage 등급을 사용하려면 로그인하거나\n다른 등급을 선택해주세요.' : loc === 'ja' ? 'Pro/Archmageグレードをご利用いただくにはログインするか、\n別のグレードを選択してください。' : loc === 'zh' ? '要使用Pro/Archmage等级，请登录或\n选择其他等级。' : 'To use Pro/Archmage grades, please log in or\nchoose a different grade.'}
-                        </p>
-                        <div style={{ display: 'flex', gap: 'var(--space-3)', justifyContent: 'center', flexWrap: 'wrap' }}>
-                            <a href={`/${loc}/account`} className="btn btn-primary" style={{ minWidth: '140px' }}>{loc === 'ko' ? '로그인' : loc === 'ja' ? 'ログイン' : loc === 'zh' ? '登录' : 'Login'}</a>
-                            <a href={`/${loc}/grade`} className="btn btn-secondary" style={{ minWidth: '140px' }}>{loc === 'ko' ? '등급 변경' : loc === 'ja' ? 'グレード変更' : loc === 'zh' ? '更改等级' : 'Change Grade'}</a>
-                        </div>
-                    </div>
-                </div>
-            );
-        }
-
         // CREDITS_EXHAUSTED — 크레딧 소진 (로그인 유저)
         if (errorCode === 'CREDITS_EXHAUSTED') {
             return (
@@ -325,26 +304,25 @@ export default function FortuneResultPanel({
                         </div>
                     )}
 
-                    {/* ───── UpgradePanel — 익명 사용자 전환 유도 ───── */}
                     {isAnonymous && (
                         <div style={{
                             marginTop: 'var(--space-6)',
                             padding: 'var(--space-6)',
-                            background: 'linear-gradient(135deg, rgba(138,100,255,0.1), rgba(236,72,153,0.1))',
-                            border: '1px solid rgba(138,100,255,0.3)',
+                            background: 'linear-gradient(135deg, rgba(138,100,255,0.12), rgba(236,72,153,0.12))',
+                            border: '1px solid rgba(138,100,255,0.35)',
                             borderRadius: 'var(--radius-xl)',
                             textAlign: 'center',
                         }}>
-                            <div style={{ fontSize: '2rem', marginBottom: 'var(--space-2)' }}>✨</div>
+                            <div style={{ fontSize: '2rem', marginBottom: 'var(--space-2)' }}>🌟</div>
                             <h3 style={{ fontSize: 'var(--text-lg)', fontWeight: 700, marginBottom: 'var(--space-2)' }}>
-                                {loc === 'ko' ? '한 번 더 보고 싶나요?' : loc === 'ja' ? 'もう一度占いますか？' : loc === 'zh' ? '还想再占一次吗？' : 'Want another reading?'}
+                                {loc === 'ko' ? '아크메이지 품질의 무료 체험이 완료되었습니다' : loc === 'ja' ? 'アークメイジ品質の無料体験が完了しました' : loc === 'zh' ? '大法师品质的免费体验已完成' : 'Your Archmage-quality free trial is complete'}
                             </h3>
                             <p style={{ color: 'var(--color-text-secondary)', fontSize: 'var(--text-sm)', marginBottom: 'var(--space-4)', lineHeight: 1.6 }}>
-                                {loc === 'ko' ? '무료 질문 1회가 완료되었습니다. 회원가입하면 +2회 더 받을 수 있어요.' : loc === 'ja' ? '無料の1回分は終了しました。登録すると+2回分が追加されます。' : loc === 'zh' ? '免费一次已用完。注册即可再获得+2次。' : 'Your free question is used. Sign up to get +2 more readings.'}
+                                {loc === 'ko' ? '방금 최고 등급 AI 분석 + Gemini 2차 검증을 체험하셨습니다.\n회원가입하시면 +2회 추가 질문을 받을 수 있습니다!' : loc === 'ja' ? '最高グレードのAI分析+Gemini二次検証を体験されました。\n登録すると+2回の追加質問が可能です！' : loc === 'zh' ? '您刚刚体验了最高级AI分析+Gemini二次验证。\n注册即可获得+2次额外提问！' : 'You just experienced top-tier AI analysis + Gemini 2nd-pass verification.\nSign up to get +2 more readings!'}
                             </p>
                             <div style={{ display: 'flex', gap: 'var(--space-3)', justifyContent: 'center', flexWrap: 'wrap' }}>
-                                <a href={`/${loc}/account`} className="btn btn-primary" style={{ minWidth: '140px' }}>
-                                    {loc === 'ko' ? '로그인 / 가입' : loc === 'ja' ? 'ログイン / 登録' : loc === 'zh' ? '登录 / 注册' : 'Login / Sign Up'}
+                                <a href={`/${loc}/account`} className="btn btn-primary" style={{ minWidth: '160px' }}>
+                                    ✨ {loc === 'ko' ? '가입하고 +2회 받기' : loc === 'ja' ? '登録して+2回もらう' : loc === 'zh' ? '注册获取+2次' : 'Sign up & get +2'}
                                 </a>
                                 <a href={`/${loc}/pricing`} className="btn btn-secondary" style={{ minWidth: '140px' }}>
                                     {loc === 'ko' ? '요금제 보기' : loc === 'ja' ? '料金を見る' : loc === 'zh' ? '查看价格' : 'View Pricing'}

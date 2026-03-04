@@ -12,10 +12,10 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const titles: Record<string, string> = {
-    ko: 'Oracle — 프리미엄 운세 플랫폼',
-    ja: 'Oracle — プレミアム占いプラットフォーム',
-    en: 'Oracle — Premium Fortune Platform',
-    zh: 'Oracle — 高端命理平台',
+    ko: 'Tarotaihub — 프리미엄 운세 플랫폼',
+    ja: 'Tarotaihub — プレミアム占いプラットフォーム',
+    en: 'Tarotaihub — Premium Fortune Platform',
+    zh: 'Tarotaihub — 高端命理平台',
   };
   const descriptions: Record<string, string> = {
     ko: 'AI 기반 사주, 점성술, 타로 분석. 동양과 서양의 지혜를 만나보세요.',
@@ -72,7 +72,7 @@ export default async function LocaleLayout({
               <div className="container nav-inner">
                 <a href={`/${locale}`} className="nav-logo">
                   <span className="logo-icon">✦</span>
-                  <span className="logo-text">Oracle</span>
+                  <span className="logo-text">Tarotaihub</span>
                 </a>
                 <div className="nav-links">
                   <a href={`/${locale}/astrology`}>
@@ -87,9 +87,7 @@ export default async function LocaleLayout({
                   <a href={`/${locale}/tarot`}>
                     {locale === 'ko' ? '타로' : locale === 'ja' ? 'タロット' : locale === 'zh' ? '塔罗' : 'Tarot'}
                   </a>
-                  <a href={`/${locale}/grade`} className="nav-grade">
-                    {locale === 'ko' ? '🔮 술사 변경' : locale === 'ja' ? '🔮 術士変更' : locale === 'zh' ? '🔮 更换术士' : '🔮 Change Seer'}
-                  </a>
+
                   <a href={`/${locale}/pricing`} className="nav-pricing">
                     {locale === 'ko' ? '요금제' : locale === 'ja' ? '料金' : locale === 'zh' ? '价格' : 'Pricing'}
                   </a>

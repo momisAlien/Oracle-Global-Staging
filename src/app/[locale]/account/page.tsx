@@ -76,12 +76,13 @@ export default function AccountPage() {
         }
     }, []);
 
-    // 프로비저닝 호출
+    // 프로비저닝 + 부트스트랩 호출
     const provisionUser = async () => {
         const token = await getIdToken();
         if (!token) return;
 
         try {
+            // Provision (legacy)
             await fetch('/api/auth/provision', {
                 method: 'POST',
                 headers: {
@@ -90,8 +91,18 @@ export default function AccountPage() {
                 },
                 body: JSON.stringify({ locale }),
             });
+
+            // Bootstrap — ensures user + entitlement docs exist
+            await fetch('/api/account/bootstrap', {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ locale }),
+            });
         } catch (err) {
-            console.error('Provision failed:', err);
+            console.error('Provision/Bootstrap failed:', err);
         }
     };
 
@@ -254,8 +265,23 @@ export default function AccountPage() {
                             padding: '1rem',
                             marginBottom: '1.5rem',
                             fontSize: '0.85rem',
+                            textAlign: 'center',
                         }}>
-                            {t('loadingEntitlement')}
+                            <p style={{ marginBottom: '0.75rem' }}>
+                                {locale === 'ko' ? '계정 정보를 불러오지 못했습니다.' : locale === 'ja' ? 'アカウント情報を読み込めませんでした。' : locale === 'zh' ? '无法加载账户信息。' : 'Could not load account info.'}
+                            </p>
+                            <button
+                                onClick={async () => {
+                                    if (user) {
+                                        await provisionUser();
+                                        await loadEntitlement(user);
+                                    }
+                                }}
+                                className="cosmic-btn"
+                                style={{ padding: '0.5rem 1.5rem', fontSize: '0.85rem' }}
+                            >
+                                {locale === 'ko' ? '다시 시도' : locale === 'ja' ? '再試行' : locale === 'zh' ? '重试' : 'Retry'}
+                            </button>
                         </div>
                     )}
 

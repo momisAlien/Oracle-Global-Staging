@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Oracle — Premium Fortune Platform",
+  title: "Tarotaihub — Premium Fortune Platform",
   description: "AI-powered astrology, saju, and tarot readings",
 };
 

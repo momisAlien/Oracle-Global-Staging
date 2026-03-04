@@ -27,6 +27,8 @@ export interface InterpretResponse {
     };
     tier: string;
     quotaRemaining: number;
+    creditsRemaining?: number;
+    isFirstTrial?: boolean;
     meta?: {
         userTier: string;
         effectiveTier: string;
