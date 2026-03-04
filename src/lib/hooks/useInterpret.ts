@@ -45,7 +45,7 @@ interface UseInterpretReturn {
 }
 
 interface InterpretParams {
-    system: 'saju' | 'astrology' | 'tarot' | 'synthesis';
+    system: 'saju' | 'astrology' | 'tarot' | 'synthesis' | 'today-report' | 'love' | 'compatibility';
     locale: string;
     question?: string;
     birthDate?: string;

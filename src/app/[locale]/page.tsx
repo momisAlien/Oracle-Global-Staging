@@ -6,10 +6,10 @@ import { useState, useEffect } from 'react';
 
 // 로케일별 모듈 순서
 const MODULE_ORDER: Record<string, string[]> = {
-  ko: ['saju', 'horoscope', 'astrology', 'tarot'],
-  ja: ['tarot', 'horoscope', 'astrology', 'saju'],
-  en: ['horoscope', 'astrology', 'tarot', 'saju'],
-  zh: ['horoscope', 'astrology', 'saju', 'tarot'],
+  ko: ['saju', 'horoscope', 'astrology', 'tarot', 'today-report', 'love'],
+  ja: ['tarot', 'horoscope', 'astrology', 'saju', 'today-report', 'love'],
+  en: ['horoscope', 'astrology', 'tarot', 'saju', 'today-report', 'love'],
+  zh: ['horoscope', 'astrology', 'saju', 'tarot', 'today-report', 'love'],
 };
 
 const MODULE_CONFIG: Record<string, { icon: string; gradient: string; href: string }> = {
@@ -17,6 +17,8 @@ const MODULE_CONFIG: Record<string, { icon: string; gradient: string; href: stri
   horoscope: { icon: '⭐', gradient: 'linear-gradient(135deg, #fbbf24, #f59e0b)', href: '/horoscope' },
   saju: { icon: '☯', gradient: 'linear-gradient(135deg, #ff6b9d, #ee5a24)', href: '/saju' },
   tarot: { icon: '🃏', gradient: 'linear-gradient(135deg, #4ecdc4, #2ecc71)', href: '/tarot' },
+  'today-report': { icon: '📋', gradient: 'linear-gradient(135deg, #f97316, #ea580c)', href: '/today-report' },
+  love: { icon: '💝', gradient: 'linear-gradient(135deg, #ec4899, #db2777)', href: '/love' },
 };
 
 export default function LandingPage() {
@@ -71,6 +73,8 @@ export default function LandingPage() {
                 horoscope: { ko: '별자리 운세', ja: '星座占い', en: 'Horoscope', zh: '星座运势' },
                 saju: { ko: '사주팔자', ja: '四柱推命', en: 'Four Pillars', zh: '四柱八字' },
                 tarot: { ko: '타로', ja: 'タロット', en: 'Tarot', zh: '塔罗牌' },
+                'today-report': { ko: '오늘의 운세', ja: '今日の運勢', en: "Today's Fortune", zh: '今日运势' },
+                love: { ko: '연애 운세', ja: '恋愛占い', en: 'Love Fortune', zh: '恋爱运势' },
               };
               const descs: Record<string, Record<string, string>> = {
                 astrology: {
@@ -96,6 +100,18 @@ export default function LandingPage() {
                   ja: '直感が導くタロットカードリーディング',
                   en: 'Intuition-guided tarot card readings',
                   zh: '直觉引导的塔罗牌解读',
+                },
+                'today-report': {
+                  ko: '종합운·재물운·연애운·건강운 AI 일일 리포트',
+                  ja: '総合運・金運・恋愛運・健康運 AI日刊レポート',
+                  en: 'AI daily report: overall, money, love & health fortune',
+                  zh: 'AI每日报告：综合运·财运·恋爱运·健康运',
+                },
+                love: {
+                  ko: '나의 연애운 분석 · 두 사람의 궁합 분석',
+                  ja: '恋愛運分析・二人の相性分析',
+                  en: 'Love fortune analysis · Compatibility check',
+                  zh: '恋爱运分析 · 两人缘分分析',
                 },
               };
 

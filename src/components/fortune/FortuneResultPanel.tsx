@@ -73,7 +73,7 @@ interface FortuneResultPanelProps {
     error: string | null;
     gender: 'male' | 'female';
     locale: string;
-    system?: 'saju' | 'astrology' | 'tarot' | 'synthesis';
+    system?: 'saju' | 'astrology' | 'tarot' | 'synthesis' | 'today-report' | 'love' | 'compatibility';
     onRetry?: () => void;
 }
 

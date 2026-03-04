@@ -247,7 +247,7 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const validSystems: FortuneSystem[] = ['saju', 'astrology', 'tarot', 'synthesis'];
+        const validSystems: FortuneSystem[] = ['saju', 'astrology', 'tarot', 'synthesis', 'today-report', 'love', 'compatibility'];
         if (!validSystems.includes(system)) {
             return NextResponse.json(
                 { error: '유효하지 않은 system입니다', code: 'INVALID_SYSTEM' },
