@@ -150,33 +150,33 @@ export async function POST(request: NextRequest) {
                         console.warn('[Interpret] Entitlement check failed, using free tier:', entError);
                     }
 
-                    // ★ Credit consumption for requested grade
-                    if (requestedGrade && requestedGrade !== 'free') {
-                        try {
-                            const { consumeCredit, getRemainingCredits } = await import('@/lib/db/credits');
-                            const creditResult = await consumeCredit(adminDb, uid, requestedGrade);
-                            if (creditResult.success) {
-                                tier = requestedGrade;
-                                creditsRemaining = creditResult.remaining;
-                            } else {
-                                // No credits for requested grade — check if user has entitlement for it
-                                if (userTier !== requestedGrade) {
-                                    const remaining = await getRemainingCredits(adminDb, uid, requestedGrade);
-                                    return NextResponse.json(
-                                        {
-                                            error: '크레딧이 부족합니다',
-                                            code: 'CREDITS_EXHAUSTED',
-                                            grade: requestedGrade,
-                                            remaining: remaining,
-                                            purchaseRequired: true,
-                                        },
-                                        { status: 402 }
-                                    );
-                                }
+                    // ★ Auto-tier: 보너스 크레딧 있으면 자동으로 best available tier 적용
+                    // 순서: archmage > pro > plus > entitlement tier (free)
+                    try {
+                        const { getRemainingCredits, consumeCredit } = await import('@/lib/db/credits');
+                        const creditTiers: TierName[] = ['archmage', 'pro', 'plus'];
+
+                        let usedCreditTier: TierName | null = null;
+                        for (const t of creditTiers) {
+                            // 이미 entitlement tier 이상이면 크레딧 소비 불필요
+                            if (t === userTier) break;
+                            const remaining = await getRemainingCredits(adminDb, uid, t);
+                            if (remaining > 0) {
+                                usedCreditTier = t;
+                                break;
                             }
-                        } catch (creditError) {
-                            console.warn('[Interpret] Credit check failed:', creditError);
                         }
+
+                        if (usedCreditTier) {
+                            const creditResult = await consumeCredit(adminDb, uid, usedCreditTier);
+                            if (creditResult.success) {
+                                tier = usedCreditTier;
+                                creditsRemaining = creditResult.remaining;
+                            }
+                        }
+                        // 크레딧 없으면 entitlement tier (free) 유지
+                    } catch (creditError) {
+                        console.warn('[Interpret] Auto-tier credit failed:', creditError);
                     }
                 }
             } catch (authError) {

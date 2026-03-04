@@ -4,6 +4,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useState, useEffect, useCallback } from 'react';
 import { getClientAuth } from '@/lib/firebase/client';
 import { onAuthStateChanged, User } from 'firebase/auth';
+import SubscriptionTab from '@/components/SubscriptionTab';
 
 type Tab = 'profile' | 'history' | 'subscription' | 'payments';
 
@@ -232,17 +233,7 @@ export default function MypagePage() {
                     )}
 
                     {activeTab === 'subscription' && (
-                        <div style={{ display: 'grid', gap: '16px' }}>
-                            <InfoRow label={labels.currentTier[loc]} value={labels.free[loc]} accent />
-                            <InfoRow label={labels.dailyUsage[loc]} value="0 / 5" />
-                            <InfoRow label={labels.dailyLimit[loc]} value={`5 ${loc === 'ko' ? '질문' : 'questions'}`} />
-                            <InfoRow label={labels.renewalDate[loc]} value="-" />
-                            <div style={{ marginTop: '16px', textAlign: 'center' }}>
-                                <a href={`/${loc}/pricing`} className="btn btn-gold">
-                                    ⬆ {labels.upgradeCta[loc]}
-                                </a>
-                            </div>
-                        </div>
+                        <SubscriptionTab user={user} locale={loc} />
                     )}
 
                     {activeTab === 'payments' && (
